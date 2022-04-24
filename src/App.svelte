@@ -190,7 +190,7 @@
 		clustersEndPoint.set(`data/${selectedDataset}`);
 		imagesEndpoint.set(
 			useGCPImages
-				? `https://storage.googleapis.com/anonymous-for-review/${selectedDataset}`
+				? `https://div-lab.github.io/dendromap-data/${selectedDataset}`
 				: `images`
 		);
 		HACDataFilename = `${$clustersEndPoint}/result_tree_and_nodes_${modelName}_${sampleCount}_${fileFormatVersion}.json`;
