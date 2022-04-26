@@ -14,6 +14,7 @@
 	} from "./util";
 	import { totalHeight } from "./stores/sidebarStore";
 	import OurTreemap from "./components/treemap/OurTreemap.svelte";
+	import Icon from "./components/misc/Icon.svelte";
 
 	/**
 	 * Formats the data through d3.hierarchy and creates cluster arrays with the given
@@ -170,7 +171,9 @@
 	let useGCPImages = true;
 	async function loadPrecomputedClassClustering(classIndex) {
 		root = undefined;
-		clustersEndPoint.set(`data/${selectedDataset}/class_clusterings`);
+		clustersEndPoint.set(
+			`https://div-lab.github.io/dendromap-data/${selectedDataset}/clusters/classes`
+		);
 		classClusteringsPresent = false;
 		// changes from loadAllClustering here
 		HACDataFilename = `${$clustersEndPoint}/${classIndex}_result_tree_and_nodes_${modelName}_${sampleCount}_${fileFormatVersion}.json`;
@@ -187,10 +190,12 @@
 	}
 	async function loadAllClustering() {
 		root = undefined;
-		clustersEndPoint.set(`data/${selectedDataset}`);
+		clustersEndPoint.set(
+			`https://div-lab.github.io/dendromap-data/${selectedDataset}/clusters`
+		);
 		imagesEndpoint.set(
 			useGCPImages
-				? `https://div-lab.github.io/dendromap-data/${selectedDataset}`
+				? `https://div-lab.github.io/dendromap-data/${selectedDataset}/images`
 				: `images`
 		);
 		HACDataFilename = `${$clustersEndPoint}/result_tree_and_nodes_${modelName}_${sampleCount}_${fileFormatVersion}.json`;
@@ -230,6 +235,23 @@
 
 <div id="top-bar">
 	<div id="title"><code>DendroMap</code></div>
+	<div id="links" style="gap: 15px; margin-top:4px;">
+		<button style="font-weight:700; height: 20px;"
+			>How to use <code>DendroMap</code></button
+		>
+		<div title="Take me to the code.">
+			<a href="https://github.com/div-lab/dendromap" target="_blank">
+				<!-- <i class="fab fa-github" style="font-size:25px;" /> -->
+				<Icon name="github" />
+			</a>
+		</div>
+		<div title="Take me to the research paper.">
+			<a href="https://github.com/div-lab/dendromap" target="_blank">
+				<!-- <i class="fab fa-youtube" style="font-size:25px;" /> -->
+				<Icon name="paper" />
+			</a>
+		</div>
+	</div>
 </div>
 <div id="main">
 	<div id="sidebar">
@@ -297,5 +319,11 @@
 	}
 	code {
 		font-family: monospace;
+	}
+	#links {
+		display: flex;
+		color: white;
+		position: absolute;
+		right: 30px;
 	}
 </style>
