@@ -121,6 +121,12 @@
 	let fileFormatVersion = 81;
 	let setName = undefined;
 
+	// props from main.js
+	export let pathToDir;
+	export let clustersSubDirName;
+	export let classClustersSubDirName;
+	export let imagesSubDirName;
+
 	function datasetSelector({
 		name,
 		model,
@@ -172,7 +178,7 @@
 	async function loadPrecomputedClassClustering(classIndex) {
 		root = undefined;
 		clustersEndPoint.set(
-			`https://div-lab.github.io/dendromap-data/${selectedDataset}/clusters/classes`
+			`${pathToDir}${selectedDataset}/${classClustersSubDirName}`
 		);
 		classClusteringsPresent = false;
 		// changes from loadAllClustering here
@@ -191,11 +197,11 @@
 	async function loadAllClustering() {
 		root = undefined;
 		clustersEndPoint.set(
-			`https://div-lab.github.io/dendromap-data/${selectedDataset}/clusters`
+			`${pathToDir}/${selectedDataset}/${clustersSubDirName}`
 		);
 		imagesEndpoint.set(
 			useGCPImages
-				? `https://div-lab.github.io/dendromap-data/${selectedDataset}/images`
+				? `${pathToDir}/${selectedDataset}/${imagesSubDirName}`
 				: `images`
 		);
 		HACDataFilename = `${$clustersEndPoint}/result_tree_and_nodes_${modelName}_${sampleCount}_${fileFormatVersion}.json`;
