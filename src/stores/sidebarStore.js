@@ -38,7 +38,7 @@ export const hideSimilarMode = writable(false);
 export const hideClassFilter = writable(false);
 export const hideMisclassifiedImages = writable(false);
 export const hidePredictions = writable(false);
-export const totalHeight = writable(950);
+export const totalHeight = writable(925);
 
 export const hideGlobalDetails = writable(false);
 export const showUserStudyParameters = writable(false);

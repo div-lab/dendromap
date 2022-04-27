@@ -12,8 +12,8 @@
 		hideSummaryClassTable,
 	} from "../../stores/sidebarStore";
 	/* Put stuff here */
-	export let classes;
-	export let nodes;
+	export let classes = [];
+	export let nodes = [];
 	export let clickClassName;
 	export let tweenRows = false;
 	$: {
@@ -330,8 +330,8 @@
 		</div>
 	</Label>
 </div>
-{#if tableData}
-	<div id="table-legend">
+<div id="table-legend">
+	{#if tableData}
 		<table>
 			<tr>
 				{#each tableLegend as nameObj, index}
@@ -358,8 +358,10 @@
 				{/each}
 			</tr>
 		</table>
-	</div>
-	<div id="container">
+	{/if}
+</div>
+<div id="container">
+	{#if tableData}
 		<table>
 			{#each sortedClasses as className}
 				<tr>
@@ -486,8 +488,8 @@
 				</tr>
 			{/each}
 		</table>
-	</div>
-{/if}
+	{/if}
+</div>
 
 <style>
 	:root {
@@ -515,7 +517,7 @@
 	#container {
 		overflow-y: overlay;
 		overflow-x: hidden;
-		height: 200px;
+		height: 150px;
 		font-size: 10px;
 		border-bottom: var(--table-border);
 	}

@@ -1,5 +1,7 @@
 <script>
 	import Sidebar from "./components/Sidebar.svelte";
+	import Article from "./components/article/Article.svelte";
+	import { ScaleOut } from "svelte-loading-spinners";
 	import * as d3 from "d3-hierarchy";
 	import { onMount } from "svelte";
 	import { clustersEndPoint, imagesEndpoint } from "./stores/endPoints";
@@ -237,85 +239,103 @@
 		};
 		a();
 	}
+	const screen = {
+		width: document.body.clientWidth,
+		height: document.body.clientHeight,
+	};
 </script>
 
 <div id="top-bar">
 	<div id="title"><code>DendroMap</code></div>
-	<div id="links" style="gap: 15px; margin-top:4px;">
-		<button style="font-weight:700; height: 20px;"
-			>How to use <code>DendroMap</code></button
-		>
+	<div id="links" style="gap: 15px; margin-top:6px;">
+		<a href="#article-start" title="Take me to the explanation.">
+			<button style="font-weight:700; cursor:pointer;">
+				What is <code>DendroMap</code>?</button
+			>
+		</a>
 		<div title="Take me to the code.">
 			<a href="https://github.com/div-lab/dendromap" target="_blank">
-				<!-- <i class="fab fa-github" style="font-size:25px;" /> -->
-				<Icon name="github" />
+				<Icon name="github" height="30px" />
 			</a>
 		</div>
 		<div title="Take me to the research paper.">
 			<a href="https://github.com/div-lab/dendromap" target="_blank">
-				<!-- <i class="fab fa-youtube" style="font-size:25px;" /> -->
-				<Icon name="paper" />
+				<Icon name="paper" height="30px" />
 			</a>
 		</div>
 	</div>
 </div>
-<div id="main">
-	<div id="sidebar">
-		{#if selectedVisualization}
-			<Sidebar
-				on:filterClass={(e) => {
-					if (e.detail === null) {
-						loadAllClustering();
-					} else {
-						loadPrecomputedClassClustering(e.detail);
-					}
-				}}
-				classes={treeClasses}
-				classNames={[]}
-				on:selectVis={({ detail }) => {
-					selectedVisualization = detail;
-				}}
-				visualizationOptions={validVisualizations}
-				initialVisualizationChoice={selectedVisualization}
-				{modelName}
-				bind:selectedDataset
-				{classClusteringsPresent}
-				task={valueTask}
-				_interface={valueInterface}
-				set={valueSet}
-				{changedDataset}
-			/>
-		{/if}
+
+<div>
+	<div id="main">
+		<div id="sidebar">
+			{#if selectedVisualization}
+				<Sidebar
+					on:filterClass={(e) => {
+						if (e.detail === null) {
+							loadAllClustering();
+						} else {
+							loadPrecomputedClassClustering(e.detail);
+						}
+					}}
+					classes={treeClasses}
+					classNames={[]}
+					on:selectVis={({ detail }) => {
+						selectedVisualization = detail;
+					}}
+					visualizationOptions={validVisualizations}
+					initialVisualizationChoice={selectedVisualization}
+					{modelName}
+					bind:selectedDataset
+					{classClusteringsPresent}
+					task={valueTask}
+					_interface={valueInterface}
+					set={valueSet}
+					{changedDataset}
+				/>
+			{/if}
+		</div>
+		<div id="vis">
+			{#if root}
+				<OurTreemap
+					width={Math.max(screen.width - 600, 800)}
+					height={$totalHeight}
+				/>
+			{:else}
+				<div style="display:flex; gap:10px; align-items:center;">
+					<h1 style="margin:0;padding:0;color: #00000020;">
+						Loading Data
+					</h1>
+					<ScaleOut size="40" color="#333333" unit="px" />
+				</div>
+			{/if}
+		</div>
 	</div>
-	<div id="vis">
-		{#if root}
-			<OurTreemap width={$totalHeight} height={$totalHeight} />
-		{:else}
-			<p>Loading dataset...</p>
-		{/if}
-	</div>
+	<Article />
 </div>
 
 <style>
 	#top-bar {
 		width: 100%;
-		height: 15px;
+		height: 25px;
 		background-color: var(--dark-grey);
 		padding-top: 10px;
 		padding-bottom: 10px;
 		display: flex;
 		align-items: center;
-		border-bottom: 1.5px solid hsla(0, 0%, 0%, 0.1);
+		/* border-bottom: 1.5px solid hsla(0, 0%, 0%, 0.1); */
 	}
 	#title {
 		color: white;
-		font-size: 20px;
+		font-size: 25px;
 		font-weight: 600;
 		margin-left: 20px;
 		margin-top: -4px;
 	}
 	#main {
 		display: flex;
+		height: 925px;
+		border-bottom: 1.5px solid #00000010;
 	}
 	#sidebar {
 		--width: 550px;
@@ -330,6 +350,12 @@
 		display: flex;
 		color: white;
 		position: absolute;
-		right: 30px;
+		right: 25px;
+	}
+	#vis {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 </style>

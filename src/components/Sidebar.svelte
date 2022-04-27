@@ -95,7 +95,7 @@
 <div id="sidebar" style="">
 	<div
 		class="sidebar-item"
-		style="display: flex; margin-top: -8px; justify-content: start; text-transform: capitalize;"
+		style="display: flex; justify-content: start; text-transform: capitalize; padding-top: 0;"
 	>
 		{#if !$hideGlobalDetails}
 			<Label outerDivStyle="width: 110px;" label="Dataset">
@@ -309,18 +309,12 @@
 			<div class="parent-info">
 				<BigLabel label="Class Table">
 					<div>
-						{#if $selectedParent !== null && selectedVisualization === "treemap" && !changedDataset}
+						{#if $selectedParent !== null && !changedDataset}
 							<ClassTable
 								nodes={$selectedParent.cluster}
 								classes={copyClasses()}
 								{clickClassName}
 								tweenRows={animateClassTable}
-							/>
-						{:else if $currentNodesShowing.length && selectedVisualization === "grid"}
-							<ClassTable
-								nodes={$currentNodesShowing}
-								classes={copyClasses()}
-								{clickClassName}
 							/>
 						{/if}
 					</div>
@@ -337,7 +331,6 @@
 			</div>
 		</BigLabel>
 	</div>
-	<div class="hor-line" style="margin-top: 20px;" />
 </div>
 
 <style>
@@ -358,9 +351,8 @@
 	}
 	#sidebar {
 		border-right: 1.5px solid var(--lighter-grey);
-		margin-right: 10px;
-		/* height: 1000px; */
-		/* width: 500px; */
+		background-color: hsl(0, 0%, 98.5%);
+		height: 100%;
 	}
 	.sidebar-item {
 		padding-left: 20px;
