@@ -1,31 +1,24 @@
 <script>
 	import DendroMap from "./DendroMap.svelte";
-	/* Put stuff here */
+	import Section from "./Section.svelte";
+	import Body from "./Body.svelte";
+	import Writing from "./Writing.svelte";
 </script>
 
-<div id="article-container">
-	<div class="article-text">
-		<h1 id="article-start">What is <DendroMap />?</h1>
-		<p>Some example text;</p>
-	</div>
-</div>
+<Writing>
+	<Section>What is <DendroMap />?</Section>
+	<Body>
+		Lorem Ipsum is simply dummy text of the printing and typesetting
+		industry. Lorem Ipsum has been the industry's standard dummy text ever
+		since the 1500s, when an unknown printer took a galley of type and
+		scrambled it to make a type specimen book. It has survived not only five
+		centuries, but also the leap into electronic typesetting, remaining
+		essentially unchanged. It was popularised in the 1960s with the release
+		of Letraset sheets containing Lorem Ipsum passages, and more recently
+		with desktop publishing software like Aldus PageMaker including versions
+		of Lorem Ipsum
+	</Body>
+</Writing>
 
 <style>
-	/*  put stuff here */
-	#article-container {
-		display: flex;
-		justify-content: center;
-		padding-top: 20px;
-	}
-	.article-text {
-		width: 800px;
-		border: 1px solid red;
-	}
-	h1 {
-		font-size: 35px;
-	}
-	p {
-		line-height: 1.1;
-		font-size: 19px;
-	}
 </style>
