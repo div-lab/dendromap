@@ -16,7 +16,10 @@
 	} from "./util";
 	import { totalHeight } from "./stores/sidebarStore";
 	import OurTreemap from "./components/treemap/OurTreemap.svelte";
+	import GithubIcon from "./components/misc/GithubIcon.svelte";
+	import PaperIcon from "./components/misc/PaperIcon.svelte";
 	import Icon from "./components/misc/Icon.svelte";
+	import ArticleSidebar from "./components/article/ArticleSidebar.svelte";
 
 	/**
 	 * Formats the data through d3.hierarchy and creates cluster arrays with the given
@@ -172,7 +175,7 @@
 
 	// load the data and store in the global variables for use in the treemap
 	onMount(async () => {
-		silenceConsoleLogs();
+		// silenceConsoleLogs();
 	});
 
 	let classClusteringsPresent;
@@ -243,24 +246,29 @@
 		width: document.body.clientWidth,
 		height: document.body.clientHeight,
 	};
+	let articleOpen = false;
+	const toggleSidebarArticle = () => (articleOpen = !articleOpen);
 </script>
 
 <div id="top-bar">
 	<div id="title"><code>DendroMap</code></div>
 	<div id="links" style="gap: 15px; margin-top:6px;">
-		<a href="#article-start" title="Take me to the explanation.">
-			<button style="font-weight:700; cursor:pointer;">
-				What is <code>DendroMap</code>?</button
+		<!-- <a title="Take me to the explanation.">
+			<button
+				on:click={toggleSidebarArticle}
+				style="font-weight:700; cursor:pointer;"
 			>
-		</a>
-		<div title="Take me to the code.">
+				What's the point of <code>DendroMap</code>?</button
+			>
+		</a> -->
+		<div title="Take me to the code." style="">
 			<a href="https://github.com/div-lab/dendromap" target="_blank">
-				<Icon name="github" height="30px" />
+				<GithubIcon height={25} fill="white" />
 			</a>
 		</div>
-		<div title="Take me to the research paper.">
-			<a href="https://github.com/div-lab/dendromap" target="_blank">
-				<Icon name="paper" height="30px" />
+		<div title="Take me to the research paper." style="">
+			<a href="https://arxiv.org/" target="_blank">
+				<PaperIcon height={25} fill="white" />
 			</a>
 		</div>
 	</div>
@@ -283,6 +291,7 @@
 					on:selectVis={({ detail }) => {
 						selectedVisualization = detail;
 					}}
+					bind:articleSidebarOpen={articleOpen}
 					visualizationOptions={validVisualizations}
 					initialVisualizationChoice={selectedVisualization}
 					{modelName}
@@ -311,7 +320,7 @@
 			{/if}
 		</div>
 	</div>
-	<Article />
+	<ArticleSidebar bind:open={articleOpen} />
 </div>
 
 <style>

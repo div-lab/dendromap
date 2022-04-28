@@ -33,6 +33,8 @@
 	import BigLabel from "./sidebarComponents/BigLabel.svelte";
 	import Switch from "./sidebarComponents/Switch.svelte";
 	import Slider from "./sidebarComponents/Slider.svelte";
+	import HelpIcon from "./misc/HelpIcon.svelte";
+	import DendroMap from "./article/DendroMap.svelte";
 
 	const dispatch = createEventDispatcher();
 
@@ -42,6 +44,7 @@
 	export let modelName;
 	export let selectedDataset;
 	export let animateClassTable = false;
+	export let articleSidebarOpen = false;
 
 	// optional if we are in the user study
 	export let task;
@@ -95,8 +98,19 @@
 <div id="sidebar" style="">
 	<div
 		class="sidebar-item"
-		style="display: flex; justify-content: start; text-transform: capitalize; padding-top: 0;"
+		style="display: flex; justify-content: start; text-transform: capitalize; padding-top: 0; gap: 40px;"
 	>
+		<div>
+			<button
+				class="help-button"
+				style="margin:0; margin-top:10px; padding:0; padding-left: 10px; padding-right:10px; height: 40px; text-align: center;"
+				on:click={() => {
+					articleSidebarOpen = !articleSidebarOpen;
+				}}
+			>
+				What is <DendroMap /><HelpIcon height={18} />
+			</button>
+		</div>
 		{#if !$hideGlobalDetails}
 			<Label outerDivStyle="width: 110px;" label="Dataset">
 				<select bind:value={selectedDataset}>
@@ -104,7 +118,7 @@
 					<option value={"cifar10"}>CIFAR-10</option>
 				</select>
 			</Label>
-			<Label outerDivStyle="width: 95px; margin-left: 40px;" label="Model"
+			<Label outerDivStyle="width: 95px;" label="Model"
 				>{modelName === "resnet50" ? "ResNet50" : modelName}</Label
 			>
 		{:else}
@@ -385,5 +399,13 @@
 		border: none;
 		outline: none;
 		border-left: 2px solid steelblue;
+	}
+	.help-button {
+		border-color: rgba(255, 166, 0, 0.413);
+		background-color: transparent;
+		cursor: pointer;
+		border-width: 1.5px;
+		border-radius: 3px;
+		font-size: 16px;
 	}
 </style>
