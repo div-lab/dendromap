@@ -16,7 +16,7 @@
 		padding-top: 20px;
 	}
 	.article-text {
-		width: 700px;
+		width: 550px;
 		/* border: 1px solid rgba(0, 0, 0, 0.034); */
 	}
 </style>

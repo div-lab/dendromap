@@ -1,8 +1,9 @@
 <script>
 	export let style = "";
+	export let id = "";
 </script>
 
-<p {style} class="body-component">
+<p {style} {id} class="body-component">
 	<slot />
 </p>
 

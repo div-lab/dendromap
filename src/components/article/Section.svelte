@@ -2,18 +2,20 @@
 	import Divider from "./Divider.svelte";
 
 	export let style = "";
+	export let id = "";
 </script>
 
-<h1 {style} class="header-component">
+<h1 {style} class="header-component" {id}>
 	<slot />
 </h1>
 <Divider />
 
 <style>
 	.header-component {
-		font-weight: 700;
+		font-weight: 600;
 		font-size: 35px;
-		margin-bottom: 5px;
-		margin-top: 25px;
+		padding-bottom: 0px;
+		margin-bottom: 0px;
+		margin-top: 30px;
 	}
 </style>
