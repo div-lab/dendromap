@@ -1,7 +1,7 @@
 <script>
 	import { fly } from "svelte/transition";
 	import Article from "./Article.svelte";
-	/* Put stuff here */
+	import ExitButton from "./ExitButton.svelte";
 	export let width = "700px";
 
 	export let open = false;
@@ -33,7 +33,7 @@
 			}}
 			transition:fly={{ x: -900 }}
 		>
-			<div on:click={exit}>close</div>
+			<ExitButton on:click={exit} />
 			<Article />
 		</div>
 	</div>

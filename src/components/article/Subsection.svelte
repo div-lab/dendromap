@@ -5,15 +5,15 @@
 	export let id = "";
 </script>
 
-<h1 {style} class="header-component" {id}>
+<h2 {style} class="subheader-component" {id}>
 	<slot />
-</h1>
+</h2>
 <Divider />
 
 <style>
-	.header-component {
+	.subheader-component {
 		font-weight: 600;
-		font-size: 35px;
+		font-size: 23px;
 		padding-bottom: 0px;
 		margin-bottom: 10px;
 		margin-top: 30px;

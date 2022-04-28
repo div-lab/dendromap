@@ -1,6 +1,7 @@
 <script>
 	import DendroMap from "./DendroMap.svelte";
 	import Section from "./Section.svelte";
+	import Subsection from "./Subsection.svelte";
 	import Body from "./Body.svelte";
 	import Writing from "./Writing.svelte";
 	import PaperIcon from "../misc/PaperIcon.svelte";
@@ -10,28 +11,41 @@
 <Writing>
 	<Section>How to use <DendroMap /></Section>
 	<Body>
-		<DendroMap /> is a tool you can use to explore a large number of images from
-		machine learning image datasets. Without insight into the data, you're training
-		a machine learning model in the dark, with no sound, and no idea what the
-		next best step will be. Image datasets can have a ton of images, making discovery
-		of balance, diversity, and types of images very difficult – leaving you in
-		the dark.
-		<DendroMap /> adds light to the process with structured exploration to develop
-		insights into large-scale image datasets. With <DendroMap /> can get an overview
-		of the main types of image groups and click to
-		<i>zoom</i> to reveal more detail within that group. The overview and
-		<i>zooming</i>
-		on-demand make exploration of large-scale datasets possible without overwhelming
-		you!
+		<DendroMap /> visualizes large-scale image datasets used for machine learning.
+		Insight into your data can be important to effectively and efficiently train
+		your model; however, without structure, exploration becomes difficult for
+		a large number of images.
+		<DendroMap /> adds a hierarchical structure to the images by grouping similar
+		images together. The structure is displayed as an overview with a treemap
+		and can be interactively explored to reveal fine-grained similar groups of
+		images. With our visualization, you'll be able to explore the images and
+		gain insight into the different types, balance, diversity, and performance
+		metrics of or involving the images.
 	</Body>
 	<Body>
 		Check out our <Link href="https://arxiv.org" openNewTab
-			>research paper <PaperIcon
+			>Research Paper <PaperIcon
 				height={15}
 				fill="hsla(206, 90%, 20%, 0.7)"
 			/>
-		</Link> on <DendroMap />, if you are interested in the exact details.
+		</Link> on <DendroMap /> if you are interested in the exact details, use
+		cases, or the user study that supports the its effectiveness compared to
+		another structured exploration technique, t-SNE grid.
 	</Body>
+	<Body>
+		For details on how to use the core <DendroMap /> features, scroll down to
+		one of the sections:
+		<Link href="#cluster-subsection">Treemap Exploration</Link> or
+		<Link href="#image-subsection">Image Details</Link>.
+	</Body>
+	<Subsection id="cluster-subsection">Treemap Exploration</Subsection>
+	<Body>TEst TEst TEst TEst TEst TEst</Body>
+	<Body>TEst TEst TEst TEst TEst TEst</Body>
+	<Body>TEst TEst TEst TEst TEst TEst</Body>
+	<Subsection id="image-subsection">Image Details</Subsection>
+	<Body>TEst TEst TEst TEst TEst TEst</Body>
+	<Body>TEst TEst TEst TEst TEst TEst</Body>
+	<Body>TEst TEst TEst TEst TEst TEst</Body>
 </Writing>
 
 <style>

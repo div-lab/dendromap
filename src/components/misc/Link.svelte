@@ -9,7 +9,6 @@
 <style>
 	a {
 		border-bottom-color: hsla(206, 90%, 20%, 0.3);
-		text-transform: uppercase;
 		font-size: 0.85em;
 		color: hsla(206, 90%, 20%, 0.7);
 		text-decoration: none;

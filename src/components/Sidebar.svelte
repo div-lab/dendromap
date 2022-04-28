@@ -108,7 +108,7 @@
 					articleSidebarOpen = !articleSidebarOpen;
 				}}
 			>
-				What is <DendroMap /><HelpIcon height={18} />
+				How to use <DendroMap /><HelpIcon height={18} />
 			</button>
 		</div>
 		{#if !$hideGlobalDetails}

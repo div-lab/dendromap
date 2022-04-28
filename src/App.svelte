@@ -246,7 +246,7 @@
 		width: document.body.clientWidth,
 		height: document.body.clientHeight,
 	};
-	let articleOpen = false;
+	let articleOpen = true;
 	const toggleSidebarArticle = () => (articleOpen = !articleOpen);
 </script>
 
