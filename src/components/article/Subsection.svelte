@@ -13,7 +13,7 @@
 <style>
 	.subheader-component {
 		font-weight: 600;
-		font-size: 23px;
+		font-size: 21px;
 		padding-bottom: 0px;
 		margin-bottom: 10px;
 		margin-top: 30px;

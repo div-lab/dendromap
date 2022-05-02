@@ -34,17 +34,55 @@
 	<Body>
 		For details on how to use the core <DendroMap /> features, scroll down to
 		one of the sections:
-		<Link href="#cluster-subsection">Treemap Exploration</Link> or
-		<Link href="#image-subsection">Image Interactions</Link>.
+		<Link href="#exploration-article">Exploration</Link> or
+		<Link href="#analysis-article">Analysis</Link>.
 	</Body>
-	<Subsection id="cluster-subsection">Treemap Exploration</Subsection>
-	<Body>TEst TEst TEst TEst TEst TEst</Body>
-	<Body>TEst TEst TEst TEst TEst TEst</Body>
-	<Body>TEst TEst TEst TEst TEst TEst</Body>
-	<Subsection id="image-subsection">Image Details</Subsection>
-	<Body>TEst TEst TEst TEst TEst TEst</Body>
-	<Body>TEst TEst TEst TEst TEst TEst</Body>
-	<Body>TEst TEst TEst TEst TEst TEst</Body>
+	<Subsection id="exploration-article">Exploration</Subsection>
+	<Body>
+		After hierarchically (agglomerative) clustering the images, the
+		structure is displayed with a treemap. By default, to not overwhelm,
+		only a few (8) clusters are shown. The images displayed on each of these
+		clusters previews the remainder of the dendrogram. You can interact to
+		traverse down the tree to explore more images under that hierarchy.
+	</Body>
+	<Body
+		>Exploring the <DendroMap /> is simple using two main interactions: Zooming
+		In and Out.</Body
+	>
+	<Body>
+		<b>Clusters Showing</b>. By clicking on a colored rectangle that houses
+		a group of images, you can zoom into that image group with a zooming
+		animation. This will reveal the specified number of clusters with those
+		images.
+	</Body>
+	<Body>
+		<b>Zooming In</b>. By clicking on a colored rectangle that houses a
+		group of images, you can zoom into that image group with a zooming
+		animation. This will reveal the specified number of clusters with those
+		images.
+	</Body>
+	<Body>
+		<b>Zooming Out</b>. By clicking on the current parent cluster (the outer
+		most rectangle), you can zoom back to where you were before. This
+		corresponds to zooming out animation and going back to an overview.
+	</Body>
+
+	<Subsection id="analysis-article">Analysis</Subsection>
+	<Body>
+		<b>Label</b>. By clicking on an image, it will show up in the Image
+		Details section in the sidebar. Here you can get a larger view and see
+		similar images computed with their high dimensional representation.
+	</Body>
+	<Body>
+		<b>Class Table</b>. By clicking on an image, it will show up in the
+		Image Details section in the sidebar. Here you can get a larger view and
+		see similar images computed with their high dimensional representation.
+	</Body>
+	<Body>
+		<b>Image Click</b>. By clicking on an image, it will show up in the
+		Image Details section in the sidebar. Here you can get a larger view and
+		see similar images computed with their high dimensional representation.
+	</Body>
 </Writing>
 
 <style>

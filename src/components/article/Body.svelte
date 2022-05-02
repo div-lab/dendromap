@@ -10,6 +10,6 @@
 <style>
 	.body-component {
 		line-height: 1.75;
-		font-size: 19px;
+		font-size: 17px;
 	}
 </style>

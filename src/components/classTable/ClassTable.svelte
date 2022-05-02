@@ -16,9 +16,9 @@
 	export let nodes = [];
 	export let clickClassName;
 	export let tweenRows = false;
-	$: {
-		console.log("class-table", classes, nodes);
-	}
+	// $: {
+	// 	console.log("class-table", classes, nodes);
+	// }
 
 	let localAccuracy = 0.0;
 	let globalCoverage = 0.0;
