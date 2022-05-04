@@ -162,10 +162,7 @@
 								const selectedClass = e.detail.value;
 								currentClassFilter.set(selectedClass);
 								selectedImage.set(null);
-								dispatch(
-									"filterClass",
-									cpyClasses.indexOf(selectedClass)
-								);
+								dispatch("filterClass", selectedClass);
 							}}
 							on:clear={() => {
 								currentClassFilter.set(null);

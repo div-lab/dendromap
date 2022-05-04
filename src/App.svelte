@@ -125,6 +125,7 @@
 
 	export let options;
 	let selectedOption = 0;
+	$: selected = options[selectedOption];
 	console.log(options);
 
 	// default settings
@@ -196,22 +197,15 @@
 		return { leafIdMap, leafNodes, hierarchicalData };
 	}
 	let hasSimilar, hasPredictedClass, hasTrueClass, hasClasses;
-	async function fetchData(option) {
-		root = undefined;
-		const selected = options[option];
-		const res = await fetch(selected.cluster_filepath);
-		const data = await res.json();
-		const { leafIdMap, leafNodes, hierarchicalData } = processData(
-			data.tree
-		);
-
+	function formatAndStoreDendrogram(tree, classes) {
+		const { leafIdMap, leafNodes, hierarchicalData } = processData(tree);
 		// change the visualization based on provided information
 		hasSimilar = "similar" in leafNodes[0];
 		hasPredictedClass = "predicted_class" in leafNodes[0];
 		hasTrueClass = "true_class" in leafNodes[0];
-		hasClasses = "classes" in data;
+		hasClasses = classes !== undefined;
 		if (hasClasses) {
-			treeClasses = data.classes;
+			treeClasses = classes;
 		}
 		root = hierarchicalData;
 		let output = {
@@ -223,6 +217,45 @@
 
 		storeDataGlobally(output);
 		imagesEndpoint.set(selected.image_filepath);
+		console.log("hit");
+	}
+
+	async function fetchData() {
+		showTreemap = await false;
+		if (dataCache === null) {
+			const res = await fetch(selected.cluster_filepath);
+			const data = await res.json();
+			dataCache = data;
+		}
+		formatAndStoreDendrogram(
+			dataCache.tree,
+			dataCache.classes ?? undefined
+		);
+		showTreemap = await true;
+	}
+
+	let classedDataCache = {};
+	let dataCache = null;
+
+	async function fetchClassedData(selectedClass) {
+		showTreemap = await false;
+		classClusteringsPresent = false;
+		if (!(selectedClass in classedDataCache)) {
+			const res = await fetch(selected.class_cluster_filepath);
+			const data = await res.json();
+			classedDataCache = {};
+			data["classes"].forEach((class_name) => {
+				const tree = data[class_name];
+				classedDataCache[class_name] = {
+					tree,
+					classes: data["classes"],
+				};
+			});
+		}
+		const selectedData = classedDataCache[selectedClass];
+		formatAndStoreDendrogram(selectedData.tree, selectedData.classes);
+		classClusteringsPresent = true;
+		showTreemap = await true;
 	}
 
 	// app variables for data
@@ -316,8 +349,9 @@
 		width: document.body.clientWidth,
 		height: document.body.clientHeight,
 	};
-	let articleOpen = true;
+	let articleOpen = false;
 	const toggleSidebarArticle = () => (articleOpen = !articleOpen);
+	let showTreemap = false;
 </script>
 
 <div id="top-bar">
@@ -349,12 +383,14 @@
 		<div id="sidebar">
 			{#if selectedVisualization}
 				<Sidebar
-					on:filterClass={(e) => {
-						if (e.detail === null) {
-							loadAllClustering();
+					on:filterClass={async (e) => {
+						const className = e.detail;
+						if (className === null) {
+							fetchData();
 						} else {
-							loadPrecomputedClassClustering(e.detail);
+							fetchClassedData(className);
 						}
+						console.log(e.detail);
 					}}
 					classes={treeClasses}
 					{options}
@@ -377,7 +413,7 @@
 			{/if}
 		</div>
 		<div id="vis">
-			{#if root}
+			{#if showTreemap}
 				<OurTreemap
 					width={Math.max(screen.width - 600, 800)}
 					height={$totalHeight}

@@ -8,7 +8,7 @@ const app = new App({
 				dataset: "cifar10",
 				model: "resnet50",
 				cluster_filepath: "testcifar10-str.json",
-				class_cluster_filepath: undefined,
+				class_cluster_filepath: "filtered-test.json",
 				image_filepath:
 					"https://div-lab.github.io/dendromap-data/cifar10/images",
 			},
