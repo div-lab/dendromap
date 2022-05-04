@@ -1,62 +1,24 @@
 <script>
-	import Sidebar from "./components/Sidebar.svelte";
-	import Article from "./components/article/Article.svelte";
-	import { ScaleOut } from "svelte-loading-spinners";
 	import * as d3 from "d3-hierarchy";
+	import {
+		assignImageClusterToEachNode,
+		givenInstanceIdGetLeafNodeMap as IdToLeafNodeMap,
+	} from "./util";
+	import { ScaleOut } from "svelte-loading-spinners";
 	import { onMount } from "svelte";
-	import { clustersEndPoint, imagesEndpoint } from "./stores/endPoints";
+	import { imagesEndpoint } from "./stores/endPoints";
 	import {
 		globalClasses,
 		globalLeafNodesObject,
 		globalRootNode,
 	} from "./stores/globalDataStore";
-	import {
-		assignImageClusterToEachNode,
-		givenInstanceIdGetLeafNodeMap as IdToLeafNodeMap,
-	} from "./util";
 	import { totalHeight } from "./stores/sidebarStore";
-	import OurTreemap from "./components/treemap/OurTreemap.svelte";
+
+	import Sidebar from "./components/Sidebar.svelte";
+	import DendroMap from "./components/treemap/DendroMap.svelte";
 	import GithubIcon from "./components/misc/GithubIcon.svelte";
 	import PaperIcon from "./components/misc/PaperIcon.svelte";
-	import Icon from "./components/misc/Icon.svelte";
 	import ArticleSidebar from "./components/article/ArticleSidebar.svelte";
-
-	/**
-	 * Formats the data through d3.hierarchy and creates cluster arrays with the given
-	 * Cluster for each node. This is used heavily in the OurTreemap.svelte.
-	 * @param {object} rootNode
-	 * @param {object[]} treeNodes
-	 */
-	function formatForOurTreemap(rootNode, treeNodes, treeClasses) {
-		console.log(rootNode);
-		console.log(treeNodes);
-		console.log(treeClasses);
-		let hierarchicalData = d3.hierarchy(rootNode).sum((d) => d.value);
-		console.log("here", hierarchicalData.leaves());
-		let leafNodes = treeNodes.filter((node) => node.is_leaf);
-		const leafIdMap = IdToLeafNodeMap(leafNodes);
-		assignImageClusterToEachNode(hierarchicalData, ({ data }) => {
-			let leafNode = leafIdMap.get(data.instance_index);
-			if ("true_class_no" in data && "predicted_class_no" in data) {
-				leafNode.true_class = treeClasses[data.true_class_no];
-				leafNode.predicted_class = treeClasses[data.predicted_class_no];
-			} else {
-				leafNode.predicted_class = data.predicted_class;
-				leafNode.true_class = data.true_class;
-			}
-			leafNode.correct = leafNode.predicted_class === leafNode.true_class;
-
-			// remove the things that don't make sense on leaves
-			delete leafNode["confusion"];
-			delete leafNode["ongoing"];
-			delete leafNode["descendents_parents"];
-			delete leafNode["node_count"];
-
-			return leafNode;
-		});
-		console.log(hierarchicalData, leafNodes);
-		return [hierarchicalData, leafNodes, leafIdMap];
-	}
 
 	// check (stores/globalDataStore.js for more info.)
 	function storeDataGlobally({ classes, leafNodes, leafIdMap, rootNode }) {
@@ -64,115 +26,6 @@
 		globalClasses.set(classes);
 		globalRootNode.set(rootNode);
 	}
-
-	/**
-	 * Takes tree results datafile and formats + stores it to be used for our visualizations
-	 * @param {JSON} treeResults
-	 */
-	function formatAndStoreData(treeResults) {
-		const treeKey = "tree",
-			nodesKey = "nodes",
-			classesKey = "classes";
-		if (
-			!(
-				treeKey in treeResults &&
-				nodesKey in treeResults &&
-				classesKey in treeResults
-			)
-		) {
-			throw Error(
-				`One of these keys are missing: ${treeKey}, ${nodesKey}, ${classesKey} from the json.`
-			);
-		}
-		treeData = treeResults.tree;
-		treeNodes = treeResults.nodes;
-		treeClasses = treeResults.classes;
-
-		// format the data for use in our treemap
-		let givenIdReturnsLeafNodeMap, leafNodes;
-		[root, leafNodes, givenIdReturnsLeafNodeMap] = formatForOurTreemap(
-			treeData,
-			treeNodes,
-			treeClasses
-		);
-
-		// then expose those globally so no need to pass as props anywhere
-		// instead just import each global variable (check stores/globalDataStore.js)
-		let output = {
-			classes: treeClasses,
-			rootNode: root,
-			leafNodes,
-			leafIdMap: givenIdReturnsLeafNodeMap,
-		};
-		storeDataGlobally(output);
-		return output;
-	}
-
-	let validDatasets = [
-		"cifar10",
-		"cats_vs_dogs",
-		"oxford_flowers102",
-		"cifar100",
-		"imagenet",
-	];
-	let validVisualizations = [
-		"treemap",
-		"grid",
-		"binary",
-		"d3-default",
-		"dendrogram",
-	];
-
-	export let options;
-	let selectedOption = 0;
-	$: selected = options[selectedOption];
-	console.log(options);
-
-	// default settings
-	let selectedVisualization = "treemap";
-	let selectedDataset = "cifar100";
-	let sampleCount = 0;
-	let modelName = "resnet50";
-	let fileFormatVersion = 81;
-	let setName = undefined;
-
-	// props from main.js
-	export let pathToDir;
-	export let clustersSubDirName;
-	export let classClustersSubDirName;
-	export let imagesSubDirName;
-
-	function datasetSelector({
-		name,
-		model,
-		layersCountingBackwards,
-		fileFormat = "8",
-	} = {}) {
-		return async () => {
-			root = undefined;
-			classClusteringsPresent = false;
-
-			// main selection
-			selectedDataset = name;
-			modelName = model;
-			fileFormatVersion = +`${fileFormat}${layersCountingBackwards}`;
-
-			classClusteringsPresent = true;
-			await loadAllClustering();
-		};
-	}
-
-	const selectCifar100 = datasetSelector({
-		name: "cifar100",
-		model: "resnet50",
-		layersCountingBackwards: 1,
-	});
-
-	const selectCifar10 = datasetSelector({
-		name: "cifar10",
-		model: "resnet50",
-		layersCountingBackwards: 2,
-	});
 
 	function processData(tree) {
 		function forEachLeaf(parent, callback) {
@@ -196,7 +49,6 @@
 
 		return { leafIdMap, leafNodes, hierarchicalData };
 	}
-	let hasSimilar, hasPredictedClass, hasTrueClass, hasClasses;
 	function formatAndStoreDendrogram(tree, classes) {
 		const { leafIdMap, leafNodes, hierarchicalData } = processData(tree);
 		// change the visualization based on provided information
@@ -207,23 +59,21 @@
 		if (hasClasses) {
 			treeClasses = classes;
 		}
-		root = hierarchicalData;
+		dendrogramData = hierarchicalData;
 		let output = {
 			classes: treeClasses,
-			rootNode: root,
+			rootNode: dendrogramData,
 			leafNodes,
 			leafIdMap,
 		};
 
 		storeDataGlobally(output);
-		imagesEndpoint.set(selected.image_filepath);
-		console.log("hit");
+		imagesEndpoint.set(selectedOption.image_filepath);
 	}
-
 	async function fetchData() {
 		showTreemap = await false;
 		if (dataCache === null) {
-			const res = await fetch(selected.cluster_filepath);
+			const res = await fetch(selectedOption.cluster_filepath);
 			const data = await res.json();
 			dataCache = data;
 		}
@@ -233,15 +83,11 @@
 		);
 		showTreemap = await true;
 	}
-
-	let classedDataCache = {};
-	let dataCache = null;
-
 	async function fetchClassedData(selectedClass) {
 		showTreemap = await false;
 		classClusteringsPresent = false;
 		if (!(selectedClass in classedDataCache)) {
-			const res = await fetch(selected.class_cluster_filepath);
+			const res = await fetch(selectedOption.class_cluster_filepath);
 			const data = await res.json();
 			classedDataCache = {};
 			data["classes"].forEach((class_name) => {
@@ -257,114 +103,65 @@
 		classClusteringsPresent = true;
 		showTreemap = await true;
 	}
+	function silenceConsoleLogs() {
+		console.log("console log is silenced 😴");
+		console.log = () => {};
+	}
+
+	// props
+	export let options; // settings you can change in main.js that shows up in the dropdown in the sidebar
+
+	// vars
+	let selectedOptionIndex = 0;
+	$: selectedOption = options[selectedOptionIndex];
+
+	// default settings
+	let selectedVisualization = "treemap";
+	let selectedDataset = "cifar100";
+	let modelName = "resnet50";
+
+	let classedDataCache = {};
+	let dataCache = null;
+
+	const toggleSidebarArticle = () => (articleOpen = !articleOpen);
+
+	// indicators of when things are done or if we have a certain item
+	let changedDataset = false;
+	let articleOpen = false;
+	let showTreemap = false;
+	let classClusteringsPresent;
+	let hasSimilar, hasPredictedClass, hasTrueClass, hasClasses;
+
+	// dendromap dimension size
+	const screen = {
+		width: document.body.clientWidth,
+		height: document.body.clientHeight,
+	};
 
 	// app variables for data
-	let root;
-	let HACDataFilename = "";
-	let datafile;
-	let treeData;
-	let treeNodes;
+	let dendrogramData;
 	let treeClasses;
 	let valueSet, valueInterface, valueTask;
 
-	// load the data and store in the global variables for use in the treemap
-	onMount(async () => {
-		// silenceConsoleLogs();
-		// await fetchData(0);
-	});
-
+	// on change of the dataset update the dataset
 	$: {
 		const updateSelection = async (index) => {
 			changedDataset = await true;
 			await fetchData(index);
 			changedDataset = await false;
 		};
-		updateSelection(selectedOption);
+		updateSelection(selectedOptionIndex);
 	}
-	let classClusteringsPresent;
-	let useGCPImages = true;
-	async function loadPrecomputedClassClustering(classIndex) {
-		root = undefined;
-		clustersEndPoint.set(
-			`${pathToDir}${selectedDataset}/${classClustersSubDirName}`
-		);
-		classClusteringsPresent = false;
-		// changes from loadAllClustering here
-		HACDataFilename = `${$clustersEndPoint}/${classIndex}_result_tree_and_nodes_${modelName}_${sampleCount}_${fileFormatVersion}.json`;
-		if (setName !== undefined) {
-			HACDataFilename = `${$clustersEndPoint}/${classIndex}_result_tree_and_nodes_${modelName}_${sampleCount}_${fileFormatVersion}_${setName}.json`;
-		}
-		// changes from loadAllClustering ^
-
-		console.log(HACDataFilename);
-		const res = await fetch(HACDataFilename);
-		datafile = await res.json();
-		formatAndStoreData(datafile); // check the contents to see what data is stored
-		classClusteringsPresent = true;
+	$: {
+		console.log(hasSimilar, hasPredictedClass, hasTrueClass, hasClasses); // global
+		// what else should be global??
+		//
 	}
-	async function loadAllClustering() {
-		root = undefined;
-		clustersEndPoint.set(
-			`${pathToDir}/${selectedDataset}/${clustersSubDirName}`
-		);
-		imagesEndpoint.set(
-			useGCPImages
-				? `${pathToDir}/${selectedDataset}/${imagesSubDirName}`
-				: `images`
-		);
-		HACDataFilename = `${$clustersEndPoint}/result_tree_and_nodes_${modelName}_${sampleCount}_${fileFormatVersion}.json`;
-		if (setName !== undefined) {
-			HACDataFilename = `${$clustersEndPoint}/result_tree_and_nodes_${modelName}_${sampleCount}_${fileFormatVersion}_${setName}.json`;
-		}
-		console.log(HACDataFilename);
-		const res = await fetch(HACDataFilename);
-		datafile = await res.json();
-		formatAndStoreData(datafile); // check the contents to see what data is stored
-	}
-
-	function silenceConsoleLogs() {
-		console.log("console log is silenced 😴");
-		console.log = () => {};
-	}
-
-	let changedDataset = false;
-	// $: {
-	// 	const a = async () => {
-	// 		changedDataset = await true;
-	// 		switch (selectedDataset) {
-	// 			case "cifar10":
-	// 				await selectCifar10();
-	// 				break;
-	// 			case "cifar100":
-	// 				await selectCifar100();
-	// 				break;
-	// 			default:
-	// 				break;
-	// 		}
-	// 		changedDataset = await false;
-	// 	};
-	// 	a();
-	// }
-	const screen = {
-		width: document.body.clientWidth,
-		height: document.body.clientHeight,
-	};
-	let articleOpen = false;
-	const toggleSidebarArticle = () => (articleOpen = !articleOpen);
-	let showTreemap = false;
 </script>
 
 <div id="top-bar">
 	<div id="title"><code>DendroMap</code></div>
 	<div id="links" style="gap: 15px; margin-top:6px;">
-		<!-- <a title="Take me to the explanation.">
-			<button
-				on:click={toggleSidebarArticle}
-				style="font-weight:700; cursor:pointer;"
-			>
-				What's the point of <code>DendroMap</code>?</button
-			>
-		</a> -->
 		<div title="Take me to the code." style="">
 			<a href="https://github.com/div-lab/dendromap" target="_blank">
 				<GithubIcon height={25} fill="white" />
@@ -394,13 +191,12 @@
 					}}
 					classes={treeClasses}
 					{options}
-					bind:selectedOption
+					bind:selectedOption={selectedOptionIndex}
 					classNames={[]}
 					on:selectVis={({ detail }) => {
 						selectedVisualization = detail;
 					}}
 					bind:articleSidebarOpen={articleOpen}
-					visualizationOptions={validVisualizations}
 					initialVisualizationChoice={selectedVisualization}
 					{modelName}
 					bind:selectedDataset
@@ -414,9 +210,35 @@
 		</div>
 		<div id="vis">
 			{#if showTreemap}
-				<OurTreemap
+				<DendroMap
 					width={Math.max(screen.width - 600, 800)}
 					height={$totalHeight}
+					{dendrogramData}
+					imageWidth={30}
+					imageHeight={30}
+					numClustersShowing={8}
+					clusterLabelCallback={(d) => {
+						let accuracy = d.data.accuracy;
+						if (accuracy === undefined) {
+							const leafCorrect =
+								d.data.predicted_class === d.data.true_class;
+							accuracy = leafCorrect ? 1.0 : 0.0;
+						}
+						const totalLabel = `${d.data.node_count} image${
+							d.data.node_count > 1 ? "s" : ""
+						}, ${(accuracy * 100).toFixed(2)}% accuracy`;
+						return totalLabel;
+					}}
+					imageTitleCallback={(d) => {
+						return `Click to select image ${d.instance_index}\nactual: ${d.true_class}, pred: ${d.predicted_class}`;
+					}}
+					clusterTitleCallback={(d) => {
+						return "";
+					}}
+					on:imageClick={() => {}}
+					on:imageHover={() => {}}
+					on:clusterClick={() => {}}
+					on:clusterHover={() => {}}
 				/>
 			{:else}
 				<div style="display:flex; gap:10px; align-items:center;">
@@ -440,7 +262,6 @@
 		padding-bottom: 10px;
 		display: flex;
 		align-items: center;
-		/* border-bottom: 1.5px solid hsla(0, 0%, 0%, 0.1); */
 	}
 	#title {
 		color: white;

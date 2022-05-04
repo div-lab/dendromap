@@ -17,15 +17,12 @@
 		hideMisclassifiedImages,
 	} from "../../stores/sidebarStore";
 	import {
-		globalClasses,
 		globalRootNode,
-		correctColor,
 		incorrectColor,
 	} from "../../stores/globalDataStore";
 	import {
 		treemapColorGenerator,
 		toPercent,
-		classCountsLabel,
 		ID,
 		forEachSelection,
 	} from "./util";
@@ -33,17 +30,38 @@
 	import { kClustersTreeMap } from "./treemapper";
 
 	// global values used and renamed for this file
-	/** @type {HierarchyNode} */
-	$: data = $globalRootNode;
-	$: imageWidth = $treemapImageSize;
-	$: imageHeight = $treemapImageSize;
-	$: numClusters = $treemapNumClusters;
+	// $: imageWidth = $treemapImageSize;
+	// $: imageHeight = $treemapImageSize;
+	// $: numClusters = $treemapNumClusters;
 
 	/**
 	 *  These are for the jsdoc for better autocomplete for when doing type comments
 	 * @typedef {{isLeaf: boolean, x0: number, y0: number, x1: number, y1: number}} AdditionalProperties
 	 * @typedef {(d3.HierarchyNode | AdditionalProperties} HierarchyNode
 	 */
+
+	/** @type {HierarchyNode} */
+	export let dendrogramData = {};
+	export let imageHeight;
+	export let imageWidth;
+	export let numClustersShowing = 8;
+	export let imagesFocused = [];
+	export let imagesOutlined = [];
+	export let clusterLabelCallback = (d) => {
+		let accuracy = d.data.accuracy;
+		if (accuracy === undefined) {
+			const leafCorrect = d.data.predicted_class === d.data.true_class;
+			accuracy = leafCorrect ? 1.0 : 0.0;
+		}
+		const totalLabel = `${d.data.node_count} image${
+			d.data.node_count > 1 ? "s" : ""
+		}, ${toPercent(accuracy)} accuracy`;
+
+		return totalLabel;
+	};
+	export let imageTitleCallback = (d) =>
+		`Click to select image ${d.instance_index}\nactual: ${d.true_class}, pred: ${d.predicted_class}`;
+	export let clusterColorInterpolateCallback = d3.interpolateGreys;
 
 	// style and dimensions
 	export let width = 1600;
@@ -69,7 +87,7 @@
 	let y = d3.scaleLinear().rangeRound([0, height]);
 	let ogRootCount = 0;
 	function init() {
-		ogRootCount = data.data.node_count;
+		ogRootCount = dendrogramData.data.node_count;
 		// create the svg that we will work with
 		svg = d3.select(svelteSvg);
 		svg.attr("style", svgStyle).attr("width", width).attr("height", height);
@@ -77,14 +95,18 @@
 		y.domain([0, height]);
 
 		// pick a color for the rectangles as they descend deeper
-		color = treemapColorGenerator(d3.interpolateGreys, data.height, {
-			offset: 1,
-			reverseColorDirection: false,
-		});
+		color = treemapColorGenerator(
+			clusterColorInterpolateCallback,
+			dendrogramData.height,
+			{
+				offset: 1,
+				reverseColorDirection: false,
+			}
+		);
 
 		// render the treemap
-		group = svg.append("g").call(render, data);
-		selectedParent.set(data); // pass to sidebar
+		group = svg.append("g").call(render, dendrogramData);
+		selectedParent.set(dendrogramData); // pass to sidebar
 	}
 	onMount(() => {
 		init();
@@ -358,13 +380,7 @@
 					);
 				}
 			});
-		groupRect
-			.selectAll("image")
-			.append("title")
-			.text(
-				(d) =>
-					`Click to select image ${d.instance_index}\nactual: ${d.true_class}, pred: ${d.predicted_class}`
-			);
+		groupRect.selectAll("image").append("title").text(imageTitleCallback);
 	};
 
 	/**
@@ -412,7 +428,7 @@
 			y0: 0,
 			x1: width,
 			y1: height,
-			kClusters: numClusters,
+			kClusters: numClustersShowing,
 			imageWidth,
 			imageHeight,
 		});
@@ -459,7 +475,7 @@
 		})
 			.attr("fill", colorByRemainingHeight) //appends rectColor to d
 			.attr("stroke", (d, i) => {
-				if (false && i === 0 && d !== data) {
+				if (false && i === 0 && d !== dendrogramData) {
 					d.strokeColor = d3.color("steelblue").brighter(0.2);
 				} else {
 					d.strokeColor = d.rectColor.darker(0.2);
@@ -541,9 +557,9 @@
 			});
 		rect.append("title").text((d, i) => {
 			let clusterLabel = ``;
-			if (d === root && d !== data) {
+			if (d === root && d !== dendrogramData) {
 				clusterLabel = `Click to go back from cluster`;
-			} else if (d === data) {
+			} else if (d === dendrogramData) {
 			} else if (d.data.leaf) {
 				clusterLabel = `Only 1 image, can't go further`;
 			} else {
@@ -552,39 +568,41 @@
 			return clusterLabel;
 		});
 		rect.attr("cursor", (d) =>
-			d.data.leaf || d === data ? "default" : "pointer"
+			d.data.leaf || d === dendrogramData ? "default" : "pointer"
 		);
 	}
 	function renderLabel(text, showAccuracy, showCoverage) {
 		text.attr("clip-path", (d) => d.clip)
-			.text((d) => {
-				let totalLabel = `${d.data.node_count} image${
-					d.data.node_count > 1 ? "s" : ""
-				}`;
-				if (showAccuracy) {
-					let accuracy = d.data.accuracy;
-					if (accuracy === undefined) {
-						const leafCorrect =
-							d.data.predicted_class === d.data.true_class;
-						accuracy = leafCorrect ? 1.0 : 0.0;
-					}
-					let accuracyLabel = `${toPercent(accuracy)} accuracy`;
-					totalLabel += `, ${accuracyLabel}`;
-				}
-				if (showCoverage) {
-					let incorrectCount =
-						d.data.node_count - d.data.correct_count;
-					let coverage = incorrectCount / ogRootCount;
-					if (coverage === undefined) {
-						const leafCorrect =
-							d.data.predicted_class === d.data.true_class;
-						coverage = leafCorrect ? 0.0 : 1.0 / ogRootCount;
-					}
-					let coverageLabel = `${toPercent(coverage)} coverage`;
-					totalLabel += `, ${coverageLabel}`;
-				}
-				return totalLabel;
-			})
+			.text(clusterLabelCallback)
+			// (d) => {
+			// 	console.log(d);
+			// 	let totalLabel = `${d.data.node_count} image${
+			// 		d.data.node_count > 1 ? "s" : ""
+			// 	}`;
+			// 	if (showAccuracy) {
+			// 		let accuracy = d.data.accuracy;
+			// 		if (accuracy === undefined) {
+			// 			const leafCorrect =
+			// 				d.data.predicted_class === d.data.true_class;
+			// 			accuracy = leafCorrect ? 1.0 : 0.0;
+			// 		}
+			// 		let accuracyLabel = `${toPercent(accuracy)} accuracy`;
+			// 		totalLabel += `, ${accuracyLabel}`;
+			// 	}
+			// 	if (showCoverage) {
+			// 		let incorrectCount =
+			// 			d.data.node_count - d.data.correct_count;
+			// 		let coverage = incorrectCount / ogRootCount;
+			// 		if (coverage === undefined) {
+			// 			const leafCorrect =
+			// 				d.data.predicted_class === d.data.true_class;
+			// 			coverage = leafCorrect ? 0.0 : 1.0 / ogRootCount;
+			// 		}
+			// 		let coverageLabel = `${toPercent(coverage)} coverage`;
+			// 		totalLabel += `, ${coverageLabel}`;
+			// 	}
+			// 	return totalLabel;
+			// })
 			.attr("fill", (d) => (d.height < 5 ? "white" : "black"))
 			.style("font-size", "10px")
 			.attr("class", "label-text");
