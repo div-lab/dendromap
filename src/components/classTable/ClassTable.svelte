@@ -54,6 +54,7 @@
 	 * @param {string[]} classes
 	 */
 	function FN_TP_FP_Count(cluster, classes) {
+		console.log(classes);
 		let classesMap = initClassCountsMap(classes, () => ({
 			classNameWasTheTrueAndPredClass: [],
 			classNameWasTheTrueClassAndWrong: [],
@@ -97,6 +98,8 @@
 			let trueClassCounts = classesMap.get(true_class);
 			let predictedClassCounts = classesMap.get(predicted_class);
 			if (predictedClassCounts === undefined) {
+				console.log(classesMap);
+				console.log(predictedClassCounts);
 				console.log(predicted_class);
 				console.log(instance);
 				throw Error();

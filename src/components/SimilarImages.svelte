@@ -86,7 +86,7 @@
 			<div id="big-image-info">
 				<div id="container">
 					{#if image}
-						{#each image.topk_instance_index_list as simInstanceId}
+						{#each image.similar as simInstanceId}
 							<img
 								src={!imageIsEmpty()
 									? `${$imagesEndpoint}/${

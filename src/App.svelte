@@ -28,7 +28,11 @@
 	 * @param {object[]} treeNodes
 	 */
 	function formatForOurTreemap(rootNode, treeNodes, treeClasses) {
+		console.log(rootNode);
+		console.log(treeNodes);
+		console.log(treeClasses);
 		let hierarchicalData = d3.hierarchy(rootNode).sum((d) => d.value);
+		console.log("here", hierarchicalData.leaves());
 		let leafNodes = treeNodes.filter((node) => node.is_leaf);
 		const leafIdMap = IdToLeafNodeMap(leafNodes);
 		assignImageClusterToEachNode(hierarchicalData, ({ data }) => {
@@ -50,6 +54,7 @@
 
 			return leafNode;
 		});
+		console.log(hierarchicalData, leafNodes);
 		return [hierarchicalData, leafNodes, leafIdMap];
 	}
 
@@ -118,6 +123,10 @@
 		"dendrogram",
 	];
 
+	export let options;
+	let selectedOption = 0;
+	console.log(options);
+
 	// default settings
 	let selectedVisualization = "treemap";
 	let selectedDataset = "cifar100";
@@ -164,6 +173,58 @@
 		layersCountingBackwards: 2,
 	});
 
+	function processData(tree) {
+		function forEachLeaf(parent, callback) {
+			if (parent.leaf) {
+				callback(parent);
+				return;
+			}
+			parent.children.forEach((child) => {
+				forEachLeaf(child, callback);
+			});
+		}
+		// remove this by init value as 1 for leaves in python
+		forEachLeaf(tree, (node) => {
+			node.value = 1;
+			node.correct = node.correct_count === 1;
+		});
+		let hierarchicalData = d3.hierarchy(tree).sum((d) => d.value);
+		let leafNodes = hierarchicalData.leaves().map((leaf) => leaf.data);
+		let leafIdMap = IdToLeafNodeMap(leafNodes);
+		assignImageClusterToEachNode(hierarchicalData); // creates a cluster property on each node in the tree
+
+		return { leafIdMap, leafNodes, hierarchicalData };
+	}
+	let hasSimilar, hasPredictedClass, hasTrueClass, hasClasses;
+	async function fetchData(option) {
+		root = undefined;
+		const selected = options[option];
+		const res = await fetch(selected.cluster_filepath);
+		const data = await res.json();
+		const { leafIdMap, leafNodes, hierarchicalData } = processData(
+			data.tree
+		);
+
+		// change the visualization based on provided information
+		hasSimilar = "similar" in leafNodes[0];
+		hasPredictedClass = "predicted_class" in leafNodes[0];
+		hasTrueClass = "true_class" in leafNodes[0];
+		hasClasses = "classes" in data;
+		if (hasClasses) {
+			treeClasses = data.classes;
+		}
+		root = hierarchicalData;
+		let output = {
+			classes: treeClasses,
+			rootNode: root,
+			leafNodes,
+			leafIdMap,
+		};
+
+		storeDataGlobally(output);
+		imagesEndpoint.set(selected.image_filepath);
+	}
+
 	// app variables for data
 	let root;
 	let HACDataFilename = "";
@@ -176,8 +237,17 @@
 	// load the data and store in the global variables for use in the treemap
 	onMount(async () => {
 		// silenceConsoleLogs();
+		// await fetchData(0);
 	});
 
+	$: {
+		const updateSelection = async (index) => {
+			changedDataset = await true;
+			await fetchData(index);
+			changedDataset = await false;
+		};
+		updateSelection(selectedOption);
+	}
 	let classClusteringsPresent;
 	let useGCPImages = true;
 	async function loadPrecomputedClassClustering(classIndex) {
@@ -225,23 +295,23 @@
 	}
 
 	let changedDataset = false;
-	$: {
-		const a = async () => {
-			changedDataset = await true;
-			switch (selectedDataset) {
-				case "cifar10":
-					await selectCifar10();
-					break;
-				case "cifar100":
-					await selectCifar100();
-					break;
-				default:
-					break;
-			}
-			changedDataset = await false;
-		};
-		a();
-	}
+	// $: {
+	// 	const a = async () => {
+	// 		changedDataset = await true;
+	// 		switch (selectedDataset) {
+	// 			case "cifar10":
+	// 				await selectCifar10();
+	// 				break;
+	// 			case "cifar100":
+	// 				await selectCifar100();
+	// 				break;
+	// 			default:
+	// 				break;
+	// 		}
+	// 		changedDataset = await false;
+	// 	};
+	// 	a();
+	// }
 	const screen = {
 		width: document.body.clientWidth,
 		height: document.body.clientHeight,
@@ -287,6 +357,8 @@
 						}
 					}}
 					classes={treeClasses}
+					{options}
+					bind:selectedOption
 					classNames={[]}
 					on:selectVis={({ detail }) => {
 						selectedVisualization = detail;

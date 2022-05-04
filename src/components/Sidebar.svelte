@@ -45,6 +45,8 @@
 	export let selectedDataset;
 	export let animateClassTable = false;
 	export let articleSidebarOpen = false;
+	export let options;
+	export let selectedOption;
 
 	// optional if we are in the user study
 	export let task;
@@ -112,15 +114,18 @@
 			</button>
 		</div>
 		{#if !$hideGlobalDetails}
-			<Label outerDivStyle="width: 110px;" label="Dataset">
-				<select bind:value={selectedDataset}>
-					<option value={"cifar100"}>CIFAR-100</option>
-					<option value={"cifar10"}>CIFAR-10</option>
+			<Label outerDivStyle="width: 200px;" label="Dataset">
+				<select bind:value={selectedOption}>
+					{#each options as option, i}
+						<option value={i}
+							>{option.dataset}–{option.model}</option
+						>
+					{/each}
 				</select>
 			</Label>
-			<Label outerDivStyle="width: 95px;" label="Model"
+			<!-- <Label outerDivStyle="width: 95px;" label="Model"
 				>{modelName === "resnet50" ? "ResNet50" : modelName}</Label
-			>
+			> -->
 		{:else}
 			<Label outerDivStyle="width: 100px;" label="Current Task"
 				>task {task}</Label

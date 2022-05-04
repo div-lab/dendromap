@@ -336,7 +336,7 @@
 				if ($highlightSimilarImages) {
 					highlightImages({
 						imageGroup: svg.selectAll("image"),
-						instancesToHighlight: d.topk_instance_index_list,
+						instancesToHighlight: d.similar,
 						hiddenOpacity,
 						highlightedOpacity,
 					});
