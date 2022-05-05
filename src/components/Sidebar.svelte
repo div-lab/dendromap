@@ -110,11 +110,11 @@
 					articleSidebarOpen = !articleSidebarOpen;
 				}}
 			>
-				How to use <DendroMap /><HelpIcon height={18} />
+				<b>Open Article</b>: What is <DendroMap />?
 			</button>
 		</div>
 		{#if !$hideGlobalDetails}
-			<Label outerDivStyle="width: 200px;" label="Dataset">
+			<Label outerDivStyle="width: 150px;" label="Dataset">
 				<select bind:value={selectedOption}>
 					{#each options as option, i}
 						<option value={i}
@@ -393,21 +393,21 @@
 	}
 	select {
 		border: none;
-		border-left: 2px solid black;
+		border-left: 2px solid var(--dark-grey);
 		font: inherit;
 		cursor: pointer;
 	}
 	select:focus {
 		border: none;
 		outline: none;
-		border-left: 2px solid steelblue;
+		border-left: 2px solid var(--clear-grey);
 	}
 	.help-button {
-		border-color: rgba(255, 166, 0, 0.413);
 		background-color: transparent;
 		cursor: pointer;
-		border-width: 1.5px;
+		border-width: 1px;
 		border-radius: 3px;
+		border-color: rgba(255, 166, 0, 0.431);
 		font-size: 16px;
 	}
 </style>

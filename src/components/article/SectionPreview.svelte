@@ -25,7 +25,7 @@
 		border-radius: 3px;
 		padding: 10px;
 		transition: 100ms box-shadow ease-in-out;
-		border-width: 2px;
+		border-width: 1.5px;
 		border-style: solid;
 	}
 	.preview-text {

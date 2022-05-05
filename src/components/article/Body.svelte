@@ -11,5 +11,6 @@
 	.body-component {
 		line-height: 1.75;
 		font-size: 17px;
+		color: #494949;
 	}
 </style>

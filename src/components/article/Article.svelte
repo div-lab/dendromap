@@ -9,6 +9,7 @@
 	import SectionPreview from "./SectionPreview.svelte";
 	import PaperLink from "./PaperLink.svelte";
 	import people from "./people";
+	import Figure from "./Figure.svelte";
 	import { color } from "d3";
 
 	class Color {
@@ -43,7 +44,7 @@
 <Writing>
 	<Section>What is <DendroMap />?</Section>
 	<Body>
-		<DendroMap /> is an interactive tool to explore large image-scale datasets
+		<DendroMap /> is an interactive tool to explore large-scale image datasets
 		used for machine learning.
 	</Body>
 	<Body>
@@ -130,29 +131,26 @@
 	</Subsection>
 
 	<Body>
-		After hierarchically (agglomerative) clustering the images, the
-		structure is displayed with a treemap. By default, to not overwhelm,
-		only a few (8) clusters are shown. The images displayed on each of these
-		clusters previews the remainder of the dendrogram. You can interact to
-		traverse down the tree to explore more images under that hierarchy.
+		<DendroMap /> displays a preview of the data and provides exploration by
+		clicking to zoom into any cluster you want! If you prefer the tree explanation,
+		each image groups overviews that portion of the tree. By clicking into a
+		group, you are traversing down the tree to finer-grained clusters under that
+		hierarchy.
 	</Body>
-	<Body
-		>Exploring the <DendroMap /> is simple using two main interactions: Zooming
-		In and Out.</Body
-	>
+
 	<Body>
-		<b>Clusters Showing</b>. By clicking on a colored rectangle that houses
-		a group of images, you can zoom into that image group with a zooming
-		animation. This will reveal the specified number of clusters with those
-		images.
-	</Body>
-	<Body>
+		<Figure center>
+			<img src="figures/zoom-in.svg" alt="zoom-in" width="100%" />
+		</Figure>
 		<b>Zooming In</b>. By clicking on a colored rectangle that houses a
 		group of images, you can zoom into that image group with a zooming
 		animation. This will reveal the specified number of clusters with those
 		images.
 	</Body>
 	<Body>
+		<Figure center>
+			<img src="figures/zoom-out.svg" alt="zoom-out" width="60%" />
+		</Figure>
 		<b>Zooming Out</b>. By clicking on the current parent cluster (the outer
 		most rectangle), you can zoom back to where you were before. This
 		corresponds to zooming out animation and going back to an overview.
