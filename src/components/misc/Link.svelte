@@ -9,7 +9,7 @@
 <style>
 	a {
 		border-bottom-color: hsla(206, 90%, 20%, 0.3);
-		font-size: 0.85em;
+		font-size: 0.9em;
 		color: hsla(206, 90%, 20%, 0.7);
 		text-decoration: none;
 		border-bottom-width: 1px;

@@ -2,7 +2,7 @@
 	import { fly } from "svelte/transition";
 	import Article from "./Article.svelte";
 	import ExitButton from "./ExitButton.svelte";
-	export let width = "700px";
+	export let width = "750px";
 
 	export let open = false;
 

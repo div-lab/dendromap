@@ -9,7 +9,7 @@
 <a {href}>
 	<div
 		class="preview-container no-select"
-		style="width: {width}; height: {height}; background-color: {backgroundColor}; border: {color} 2px solid; "
+		style="width: {width}; height: {height}; background-color: {backgroundColor}; border-color: {color}; "
 	>
 		<div class="preview-text" style="color: #06B5DC;">
 			<slot />
@@ -19,12 +19,14 @@
 
 <style>
 	.preview-container:hover {
-		box-shadow: 0px 0 3px 3px rgba(0, 0, 0, 0.1);
+		box-shadow: 0px 2px 3px 3px rgba(0, 0, 0, 0.1);
 	}
 	.preview-container {
-		/*  */
 		border-radius: 3px;
 		padding: 10px;
+		transition: 100ms box-shadow ease-in-out;
+		border-width: 2px;
+		border-style: solid;
 	}
 	.preview-text {
 		/* font-size: 30px; */

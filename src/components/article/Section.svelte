@@ -13,7 +13,7 @@
 <style>
 	.header-component {
 		font-weight: 600;
-		font-size: 33px;
+		font-size: 28px;
 		padding-bottom: 0px;
 		margin-bottom: 10px;
 		margin-top: 30px;
