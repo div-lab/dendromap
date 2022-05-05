@@ -2,13 +2,14 @@
 	import Divider from "./Divider.svelte";
 
 	export let style = "";
+	export let dividerProps = {};
 	export let id = "";
 </script>
 
 <h2 {style} class="subheader-component" {id}>
 	<slot />
 </h2>
-<Divider />
+<Divider {...dividerProps} />
 
 <style>
 	.subheader-component {

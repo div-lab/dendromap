@@ -6,38 +6,93 @@
 	import Writing from "./Writing.svelte";
 	import PaperIcon from "../misc/PaperIcon.svelte";
 	import Link from "../misc/Link.svelte";
+	import SectionPreview from "./SectionPreview.svelte";
+	import { color } from "d3";
+
+	class Color {
+		constructor(_color) {
+			this.color = color(_color);
+		}
+		opacity(o) {
+			const cpy = this.color.opacity;
+			this.color.opacity = o;
+			const hsl = this.color.formatHsl();
+			this.color.opacity = cpy;
+			return hsl;
+		}
+		toString() {
+			return this.color.formatHsl();
+		}
+	}
+	let theme = {
+		orange: new Color("#F59C16"),
+		blue: new Color("#06B5DC"),
+		green: new Color("#8ADB8D"),
+	};
 </script>
 
 <Writing>
 	<Section>How to use <DendroMap /></Section>
 	<Body>
-		<DendroMap /> visualizes large-scale image datasets used for machine learning.
-		Insight into your data can be important to effectively and efficiently train
-		your model; however, without structure, exploration becomes difficult for
-		a large number of images.
-		<DendroMap /> adds a hierarchical structure to the images by grouping similar
-		images together. The structure is displayed as an overview with a treemap
-		and can be interactively explored to reveal finer-grained groups of similar
-		images. With our visualization, you'll be able to explore the images and
-		gain insight into the different types, balance, and diversity of images.
+		Insight into your data is important to efficiently and effectively train
+		your model; however, understanding of the types, diversity, and number
+		of images is extremely difficult without additional metadata.
+		<DendroMap /> is a structured approach to explore a large number of images
+		for machine learning datasets without metadata. It just uses the images!
 	</Body>
 	<Body>
-		Check out our <Link href="https://arxiv.org" openNewTab
-			>Research Paper <PaperIcon
-				height={15}
-				fill="hsla(206, 90%, 20%, 0.7)"
-			/>
-		</Link> on <DendroMap /> if you are interested in the exact details, use
-		cases, or the user study that supports <DendroMap />'s effectiveness
-		compared to another structured exploration technique, t-SNE grid.
-	</Body>
-	<Body>
-		For details on how to use the core <DendroMap /> features, scroll down to
-		one of the sections:
-		<Link href="#exploration-article">Exploration</Link> or
-		<Link href="#analysis-article">Analysis</Link>.
-	</Body>
-	<Subsection id="exploration-article">Exploration</Subsection>
+		<b>Click</b> on one of the three sections below for more information on
+		the <DendroMap /> system.</Body
+	>
+	<div style="display: flex; justify-content:space-between;">
+		<SectionPreview
+			backgroundColor={theme.blue.opacity(0.1)}
+			color={theme.blue}
+			href="#exploration-article"
+		>
+			<div style="font-size: 20px;">
+				<span style="color: grey;">How to</span>
+				<span style="color: {theme.blue}; font-weight: 700;"
+					>Explore</span
+				>
+				<span style="color: grey;"> <code>DendroMap</code> </span>
+			</div>
+		</SectionPreview>
+		<SectionPreview
+			backgroundColor={theme.orange.opacity(0.1)}
+			color={theme.orange}
+			href="#analysis-article"
+		>
+			<div style="font-size: 20px;">
+				<span style="color: {theme.orange}; font-weight: 700;"
+					>Customize</span
+				>
+				<span style="color: grey;">and</span>
+				<span style="color: {theme.orange}; font-weight: 700;"
+					>Analyze</span
+				>
+				<span style="color: grey;">detail</span>
+			</div>
+		</SectionPreview>
+		<SectionPreview
+			backgroundColor={theme.green.opacity(0.1)}
+			color={theme.green}
+			href="#more-info-article"
+		>
+			<div style="font-size: 20px;">
+				<span style="color: {theme.green}; font-weight: 700;"
+					>More Info</span
+				>
+				<span style="color: grey;"> in the Research Paper</span>
+			</div>
+		</SectionPreview>
+	</div>
+
+	<Subsection
+		id="exploration-article"
+		dividerProps={{ color: theme.blue, thickness: 1.0 }}
+		>How to Explore <code>DendroMap</code></Subsection
+	>
 	<Body>
 		After hierarchically (agglomerative) clustering the images, the
 		structure is displayed with a treemap. By default, to not overwhelm,
@@ -67,7 +122,11 @@
 		corresponds to zooming out animation and going back to an overview.
 	</Body>
 
-	<Subsection id="analysis-article">Analysis</Subsection>
+	<Subsection
+		id="analysis-article"
+		dividerProps={{ color: theme.orange, thickness: 1.0 }}
+		>Customize and Analyze Details</Subsection
+	>
 	<Body>
 		<b>Label</b>. By clicking on an image, it will show up in the Image
 		Details section in the sidebar. Here you can get a larger view and see
@@ -82,6 +141,28 @@
 		<b>Image Click</b>. By clicking on an image, it will show up in the
 		Image Details section in the sidebar. Here you can get a larger view and
 		see similar images computed with their high dimensional representation.
+	</Body>
+
+	<Subsection
+		id="more-info-article"
+		dividerProps={{ color: theme.green, thickness: 1.0 }}
+		>More Info</Subsection
+	>
+	<Body>
+		Check out our <Link href="https://arxiv.org" openNewTab
+			>Research Paper <PaperIcon
+				height={15}
+				fill="hsla(206, 90%, 20%, 0.7)"
+			/>
+		</Link> on <DendroMap /> if you are interested in the exact details, use
+		cases, or the user study that supports <DendroMap />'s effectiveness
+		compared to another structured exploration technique, t-SNE grid.
+	</Body>
+	<Body>
+		For details on how to use the core <DendroMap /> features, scroll down to
+		one of the sections:
+		<Link href="#exploration-article">Exploration</Link> or
+		<Link href="#analysis-article">Analysis</Link>.
 	</Body>
 </Writing>
 
