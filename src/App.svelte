@@ -20,6 +20,7 @@
 		hasTrueClass,
 		hasPredictedClass,
 		hasSimilar,
+		hasAccuracy,
 	} from "./stores/sidebarStore";
 
 	import Sidebar from "./components/Sidebar.svelte";
@@ -60,9 +61,11 @@
 	async function formatAndStoreDendrogram(tree, classes) {
 		const { leafIdMap, leafNodes, hierarchicalData } = processData(tree);
 		// change the visualization based on provided information
-		hasSimilar.set("similar" in leafNodes[0]);
-		hasPredictedClass.set("predicted_class" in leafNodes[0]);
-		hasTrueClass.set("true_class" in leafNodes[0]);
+		const firstLeafNode = leafNodes[0];
+		hasSimilar.set("similar" in firstLeafNode);
+		hasPredictedClass.set("predicted_class" in firstLeafNode);
+		hasTrueClass.set("true_class" in firstLeafNode);
+		hasAccuracy.set("accuracy" in firstLeafNode);
 		let hasClassesValue = classes !== undefined;
 		hasClasses.set(hasClassesValue);
 		if (hasClassesValue) {
@@ -233,36 +236,6 @@
 		</div>
 		<div id="vis">
 			{#if showTreemap}
-				<!-- <DendroMap
-					width={Math.max(screen.width - 600, 800)}
-					height={$totalHeight}
-					{dendrogramData}
-					imageWidth={$treemapImageSize}
-					imageHeight={$treemapImageSize}
-					numClustersShowing={$treemapNumClusters}
-					clusterLabelCallback={(d) => {
-						let accuracy = d.data.accuracy;
-						if (accuracy === undefined) {
-							const leafCorrect =
-								d.data.predicted_class === d.data.true_class;
-							accuracy = leafCorrect ? 1.0 : 0.0;
-						}
-						const totalLabel = `${d.data.node_count} image${
-							d.data.node_count > 1 ? "s" : ""
-						}, ${(accuracy * 100).toFixed(2)}% accuracy`;
-						return totalLabel;
-					}}
-					imageTitleCallback={(d) => {
-						return `Click to select image ${d.instance_index}\nactual: ${d.true_class}, pred: ${d.predicted_class}`;
-					}}
-					clusterTitleCallback={(d) => {
-						return "";
-					}}
-					on:imageClick={() => {}}
-					on:imageHover={() => {}}
-					on:clusterClick={() => {}}
-					on:clusterHover={() => {}}
-				/> -->
 				<DendroMap
 					{dendrogramData}
 					imageFilepath={selectedOption.image_filepath}
@@ -271,6 +244,27 @@
 					width={Math.max(screen.width - 600, 800)}
 					height={$totalHeight}
 					numClustersShowing={$treemapNumClusters}
+					clusterLabelCallback={(d) => {
+						let totalLabel = `${d.data.node_count} image${
+							d.data.node_count > 1 ? "s" : ""
+						}`;
+						if ($hasAccuracy) {
+							totalLabel += `, ${(d.data.accuracy * 100).toFixed(
+								2
+							)}% accuracy`;
+						}
+						return totalLabel;
+					}}
+					imageTitleCallback={(d) => {
+						let titleMsg = `Click to select image ${d.instance_index}`;
+						if ($hasTrueClass) {
+							titleMsg += `\ntrue class: ${d.true_class}`;
+						}
+						if ($hasPredictedClass) {
+							titleMsg += `\npred class: ${d.predicted_class}`;
+						}
+						return titleMsg;
+					}}
 					clusterTitleCallback={(d) => {
 						return "";
 					}}
