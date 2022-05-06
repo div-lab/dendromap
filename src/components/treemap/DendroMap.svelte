@@ -57,6 +57,7 @@
 	export let imageTitleCallback = (d) =>
 		`Click to select image ${d.instance_index}`;
 	export let clusterColorInterpolateCallback = d3.interpolateGreys;
+	export let currentParentCluster = null;
 
 	// style and dimensions
 	export let width = 1600;
@@ -103,6 +104,7 @@
 		// render the treemap
 		group = svg.append("g").call(render, dendrogramData);
 		selectedParent.set(dendrogramData); // pass to sidebar
+		currentParentCluster = dendrogramData;
 	}
 	onMount(() => {
 		init();
@@ -170,6 +172,7 @@
 			.call((t) => group1.transition(t).call(position, to));
 
 		selectedParent.set(to); // pass to sidebar
+		currentParentCluster = to;
 	}
 
 	/**
@@ -219,6 +222,7 @@
 			); // transition in the new group
 
 		selectedParent.set(to); // pass to sidebar
+		currentParentCluster = to;
 	}
 
 	/**
@@ -618,7 +622,7 @@
 			// make it so this is not called otherwise
 			if ($treemapNumClusters && $treemapImageSize) {
 				group.selectChildren("g").remove();
-				render(group, $selectedParent);
+				render(group, currentParentCluster);
 			}
 		}
 	}

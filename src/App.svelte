@@ -140,6 +140,7 @@
 
 	let classedDataCache = {};
 	let dataCache = null;
+	let currentParentCluster = null;
 
 	const toggleSidebarArticle = () => (articleOpen = !articleOpen);
 
@@ -268,10 +269,13 @@
 					clusterTitleCallback={(d) => {
 						return "";
 					}}
+					bind:currentParentCluster
 					on:imageClick={() => {}}
-					on:imageHover={() => {}}
+					on:imageMouseEnter={() => {}}
+					on:imageMouseLeave={() => {}}
 					on:clusterClick={() => {}}
-					on:clusterHover={() => {}}
+					on:clusterMouseEnter={() => {}}
+					on:clusterMouseLeave={() => {}}
 				/>
 			{:else}
 				<div style="display:flex; gap:10px; align-items:center;">
