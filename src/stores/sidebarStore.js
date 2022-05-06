@@ -42,3 +42,7 @@ export const totalHeight = writable(925);
 
 export const hideGlobalDetails = writable(false);
 export const showUserStudyParameters = writable(false);
+export const hasClasses = writable(false);
+export const hasTrueClass = writable(false);
+export const hasPredictedClass = writable(false);
+export const hasSimilar = writable(false);

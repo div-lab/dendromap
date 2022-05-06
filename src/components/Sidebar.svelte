@@ -24,6 +24,9 @@
 		updateZoomDimensions,
 		hideGlobalDetails,
 		showUserStudyParameters,
+		hasClasses,
+		hasSimilar,
+		hasPredictedClass,
 	} from "../stores/sidebarStore";
 	import { imagesEndpoint } from "../stores/endPoints";
 	import Label from "./sidebarComponents/Label.svelte";
@@ -156,27 +159,32 @@
 		<BigLabel label="Settings">
 			<div class="row">
 				{#if !$hideClassFilter}
-					<Label outerDivStyle="width: 120px;" label="Filter Data">
-						<SearchableSelect
-							on:select={(e) => {
-								const selectedClass = e.detail.value;
-								currentClassFilter.set(selectedClass);
-								selectedImage.set(null);
-								dispatch("filterClass", selectedClass);
-							}}
-							on:clear={() => {
-								currentClassFilter.set(null);
-								selectedImage.set(null);
-								dispatch("filterClass", null);
-							}}
-							style=""
-							placeholder="find class"
-							items={cpyClasses ? cpyClasses : []}
-							initialValue={$currentClassFilter}
-							isClearable
-							onlyValuesNoLabels
-						/>
-					</Label>
+					{#if $hasClasses}
+						<Label
+							outerDivStyle="width: 120px;"
+							label="Filter Data"
+						>
+							<SearchableSelect
+								on:select={(e) => {
+									const selectedClass = e.detail.value;
+									currentClassFilter.set(selectedClass);
+									selectedImage.set(null);
+									dispatch("filterClass", selectedClass);
+								}}
+								on:clear={() => {
+									currentClassFilter.set(null);
+									selectedImage.set(null);
+									dispatch("filterClass", null);
+								}}
+								style=""
+								placeholder="find class"
+								items={cpyClasses ? cpyClasses : []}
+								initialValue={$currentClassFilter}
+								isClearable
+								onlyValuesNoLabels
+							/>
+						</Label>
+					{/if}
 				{/if}
 				{#if selectedVisualization === "treemap"}
 					<Label
@@ -244,7 +252,7 @@
 				{/if}
 			</div>
 			<div class="row">
-				{#if !$hideMisclassifiedImages}
+				{#if !$hideMisclassifiedImages && $hasPredictedClass}
 					<Label outerDivStyle="width: 200px;" label="Outline Images">
 						<div style="display: flex; align-items:center">
 							<Switch
@@ -293,7 +301,7 @@
 						</div>
 					</Label>
 				{/if}
-				{#if !$hideSimilarMode}
+				{#if !$hideSimilarMode && $hasSimilar}
 					<Label outerDivStyle="width: 250px;" label="Similar Images">
 						<div style="display: flex; align-items:center">
 							<Switch
@@ -319,7 +327,7 @@
 			</div>
 		</BigLabel>
 	</div>
-	{#if !$hideClassTable}
+	{#if !$hideClassTable && $hasClasses}
 		<div class="hor-line" />
 		<div class="sidebar-item">
 			<div class="parent-info">

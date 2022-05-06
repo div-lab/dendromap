@@ -12,7 +12,15 @@
 		globalLeafNodesObject,
 		globalRootNode,
 	} from "./stores/globalDataStore";
-	import { totalHeight } from "./stores/sidebarStore";
+	import {
+		totalHeight,
+		treemapNumClusters,
+		treemapImageSize,
+		hasClasses,
+		hasTrueClass,
+		hasPredictedClass,
+		hasSimilar,
+	} from "./stores/sidebarStore";
 
 	import Sidebar from "./components/Sidebar.svelte";
 	import DendroMap from "./components/treemap/DendroMap.svelte";
@@ -49,14 +57,15 @@
 
 		return { leafIdMap, leafNodes, hierarchicalData };
 	}
-	function formatAndStoreDendrogram(tree, classes) {
+	async function formatAndStoreDendrogram(tree, classes) {
 		const { leafIdMap, leafNodes, hierarchicalData } = processData(tree);
 		// change the visualization based on provided information
-		hasSimilar = "similar" in leafNodes[0];
-		hasPredictedClass = "predicted_class" in leafNodes[0];
-		hasTrueClass = "true_class" in leafNodes[0];
-		hasClasses = classes !== undefined;
-		if (hasClasses) {
+		hasSimilar.set("similar" in leafNodes[0]);
+		hasPredictedClass.set("predicted_class" in leafNodes[0]);
+		hasTrueClass.set("true_class" in leafNodes[0]);
+		let hasClassesValue = classes !== undefined;
+		hasClasses.set(hasClassesValue);
+		if (hasClassesValue) {
 			treeClasses = classes;
 		}
 		dendrogramData = hierarchicalData;
@@ -77,7 +86,8 @@
 			const data = await res.json();
 			dataCache = data;
 		}
-		formatAndStoreDendrogram(
+		console.log(selectedOption.image_filepath);
+		await formatAndStoreDendrogram(
 			dataCache.tree,
 			dataCache.classes ?? undefined
 		);
@@ -113,7 +123,12 @@
 
 	// vars
 	let selectedOptionIndex = 0;
-	$: selectedOption = options[selectedOptionIndex];
+	let selectedOption;
+	$: {
+		selectedOption = options[selectedOptionIndex];
+		classedDataCache = {};
+		dataCache = null;
+	}
 
 	// default settings
 	let selectedVisualization = "treemap";
@@ -127,10 +142,9 @@
 
 	// indicators of when things are done or if we have a certain item
 	let changedDataset = false;
-	let articleOpen = false;
+	let articleOpen = true;
 	let showTreemap = false;
 	let classClusteringsPresent;
-	let hasSimilar, hasPredictedClass, hasTrueClass, hasClasses;
 
 	// dendromap dimension size
 	const screen = {
@@ -153,7 +167,14 @@
 		updateSelection(selectedOptionIndex);
 	}
 	$: {
-		console.log(hasSimilar, hasPredictedClass, hasTrueClass, hasClasses); // global
+		console.log(dendrogramData);
+		console.log(selectedOption);
+		console.log(
+			$hasClasses,
+			$hasSimilar,
+			$hasPredictedClass,
+			$hasTrueClass
+		);
 		// what else should be global??
 		//
 	}
@@ -182,12 +203,14 @@
 				<Sidebar
 					on:filterClass={async (e) => {
 						const className = e.detail;
+						showTreemap = await false;
 						if (className === null) {
-							fetchData();
+							await fetchData();
 						} else {
-							fetchClassedData(className);
+							await fetchClassedData(className);
 						}
 						console.log(e.detail);
+						showTreemap = await true;
 					}}
 					classes={treeClasses}
 					{options}
@@ -210,13 +233,13 @@
 		</div>
 		<div id="vis">
 			{#if showTreemap}
-				<DendroMap
+				<!-- <DendroMap
 					width={Math.max(screen.width - 600, 800)}
 					height={$totalHeight}
 					{dendrogramData}
-					imageWidth={30}
-					imageHeight={30}
-					numClustersShowing={8}
+					imageWidth={$treemapImageSize}
+					imageHeight={$treemapImageSize}
+					numClustersShowing={$treemapNumClusters}
 					clusterLabelCallback={(d) => {
 						let accuracy = d.data.accuracy;
 						if (accuracy === undefined) {
@@ -232,6 +255,22 @@
 					imageTitleCallback={(d) => {
 						return `Click to select image ${d.instance_index}\nactual: ${d.true_class}, pred: ${d.predicted_class}`;
 					}}
+					clusterTitleCallback={(d) => {
+						return "";
+					}}
+					on:imageClick={() => {}}
+					on:imageHover={() => {}}
+					on:clusterClick={() => {}}
+					on:clusterHover={() => {}}
+				/> -->
+				<DendroMap
+					{dendrogramData}
+					imageFilepath={selectedOption.image_filepath}
+					imageWidth={$treemapImageSize}
+					imageHeight={$treemapImageSize}
+					width={Math.max(screen.width - 600, 800)}
+					height={$totalHeight}
+					numClustersShowing={$treemapNumClusters}
 					clusterTitleCallback={(d) => {
 						return "";
 					}}

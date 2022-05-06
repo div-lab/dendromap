@@ -2,6 +2,9 @@
 	import {
 		hidePredictions,
 		showMisclassifications,
+		hasPredictedClass,
+		hasTrueClass,
+		hasSimilar,
 	} from "../stores/sidebarStore";
 	import {
 		globalLeafNodesObject,
@@ -43,14 +46,16 @@
 					>
 						{handleNull(currImage?.instance_index)}
 					</Label>
-					<Label
-						label="True Class"
-						outerDivStyle="width: {labelWidth}px; "
-					>
-						{handleNull(currImage?.true_class)}
-					</Label>
+					{#if $hasTrueClass}
+						<Label
+							label="True Class"
+							outerDivStyle="width: {labelWidth}px; "
+						>
+							{handleNull(currImage?.true_class)}
+						</Label>
+					{/if}
 				</div>
-				{#if !$hidePredictions}
+				{#if !$hidePredictions && $hasPredictedClass}
 					<div class="row" style="justify-content: end;">
 						<Label
 							label="Predicted Class"
@@ -81,7 +86,7 @@
 		</div>
 	</div>
 
-	{#if showSimilarImages}
+	{#if showSimilarImages && $hasSimilar}
 		<Label label="Similar Images" outerDivStyle=" margin-top: 5px;">
 			<div id="big-image-info">
 				<div id="container">
