@@ -412,3 +412,72 @@ export function kClustersTreeMap(
 	}
 	return toRender;
 }
+
+/**
+ * lays out the given root node until a certain number are hit not left to right, but by merge distance (normal way to cut dendrogram up)
+ * @param {{parent: d3.HierarchyNode, x0: number, y0: number, x1: number, y1: number, kClusters?: number
+ * paddingTop?: number}} treemapParams
+ * @param {(node: d3.HierarchyNode, x0: number, y0: number, x1: number, y1: number) => void} layoutCallback
+ */
+export function cuttingKClustersTreeMap(
+	{
+		parent,
+		x0,
+		y0,
+		x1,
+		y1,
+		kClusters = Infinity,
+		imageWidth = 20,
+		imageHeight = 20,
+	} = {},
+	layoutCallback = binaryLayout
+) {
+	// set the parent width and height
+	parent.x0 = x0;
+	parent.y0 = y0;
+	parent.x1 = x1;
+	parent.y1 = y1;
+
+	// create queue
+
+	// add the root node to start
+	let clustersShowing = 1;
+	let toRender = [parent];
+	let traversalOrder = [parent];
+	parent.data.merging_distance = 0.0;
+	let iterations = 0;
+
+	layouter: while (traversalOrder.length > 0 && clustersShowing < kClusters) {
+		traversalOrder = traversalOrder.sort(
+			(a, b) => b.data.merging_distance - a.data.merging_distance
+		);
+		const shortest = traversalOrder.pop();
+		shortest.isLeaf = false;
+		if (shortest.data.leaf) {
+			shortest.isLeaf = true;
+			continue layouter;
+		}
+
+		const children = shortest.children;
+		childIter: for (let i = 0; i < children.length; i++) {
+			if (clustersShowing > kClusters) break childIter;
+			const child = children[i];
+			child.isLeaf = true;
+			console.log(child.isLeaf);
+			toRender.push(child);
+			traversalOrder.push(child);
+		}
+
+		layoutCallback(
+			shortest,
+			shortest.x0,
+			shortest.y0,
+			shortest.x1,
+			shortest.y1,
+			{ imageHeight, imageWidth }
+		);
+		clustersShowing++;
+	}
+	console.log(toRender);
+	return toRender;
+}

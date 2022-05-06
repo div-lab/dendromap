@@ -15,6 +15,7 @@
 		hideLabelCoverage,
 		highlightIncorrectImages,
 		hideMisclassifiedImages,
+		currentNodesShowing,
 	} from "../../stores/sidebarStore";
 	import {
 		globalRootNode,
@@ -27,7 +28,7 @@
 		forEachSelection,
 	} from "./util";
 	import { highlightImages, resetOpacity } from "./highlightImages";
-	import { kClustersTreeMap } from "./treemapper";
+	import { kClustersTreeMap, cuttingKClustersTreeMap } from "./treemapper";
 
 	// global values used and renamed for this file
 	// $: imageWidth = $treemapImageSize;
@@ -48,19 +49,13 @@
 	export let imagesFocused = [];
 	export let imagesOutlined = [];
 	export let clusterLabelCallback = (d) => {
-		let accuracy = d.data.accuracy;
-		if (accuracy === undefined) {
-			const leafCorrect = d.data.predicted_class === d.data.true_class;
-			accuracy = leafCorrect ? 1.0 : 0.0;
-		}
 		const totalLabel = `${d.data.node_count} image${
 			d.data.node_count > 1 ? "s" : ""
-		}, ${toPercent(accuracy)} accuracy`;
-
+		}`;
 		return totalLabel;
 	};
 	export let imageTitleCallback = (d) =>
-		`Click to select image ${d.instance_index}\nactual: ${d.true_class}, pred: ${d.predicted_class}`;
+		`Click to select image ${d.instance_index}`;
 	export let clusterColorInterpolateCallback = d3.interpolateGreys;
 
 	// style and dimensions
@@ -73,6 +68,7 @@
 	export let highlightedOpacity = 1.0;
 	export let hiddenOpacity = 0.25;
 	export let topLabelSpace = 20;
+	export let imageFilepath;
 
 	/**@type {d3.Selection}*/
 	let group;
@@ -348,7 +344,7 @@
 			.attr("y", (d) => d.imagePosition.y + topLabelSpace)
 			.attr("width", imageWidth)
 			.attr("height", imageHeight)
-			.attr("href", (d) => `${$imagesEndpoint}/${d.filename}`)
+			.attr("href", (d) => `${imageFilepath}/${d.filename}`)
 			.attr("cursor", "pointer")
 			.on("click", function (event, d) {
 				selectedImage.set(d); //pass to sidebar
