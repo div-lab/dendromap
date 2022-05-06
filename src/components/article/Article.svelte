@@ -156,6 +156,11 @@
 		corresponds to zooming out animation and going back to an overview.
 	</Body>
 
+	<Body>
+		With these two interactions alone you can explore the data down to the
+		instances themselves!
+	</Body>
+
 	<Subsection
 		id="analysis-article"
 		dividerProps={{ color: theme.orange, thickness: 1.0 }}
