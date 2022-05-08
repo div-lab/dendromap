@@ -118,7 +118,12 @@
 		</div>
 		{#if !$hideGlobalDetails}
 			<Label outerDivStyle="width: 150px;" label="Dataset">
-				<select bind:value={selectedOption}>
+				<select
+					bind:value={selectedOption}
+					on:change={() => {
+						selectedImage.set(null);
+					}}
+				>
 					{#each options as option, i}
 						<option value={i}
 							>{option.dataset}–{option.model}</option
