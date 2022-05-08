@@ -122,6 +122,7 @@
 					bind:value={selectedOption}
 					on:change={() => {
 						selectedImage.set(null);
+						currentClassFilter.set(null);
 					}}
 				>
 					{#each options as option, i}
@@ -182,6 +183,7 @@
 									dispatch("filterClass", null);
 								}}
 								style=""
+								bind:value={$currentClassFilter}
 								placeholder="find class"
 								items={cpyClasses ? cpyClasses : []}
 								initialValue={$currentClassFilter}
