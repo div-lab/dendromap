@@ -28,7 +28,7 @@
 		forEachSelection,
 	} from "./util";
 	import { highlightImages, resetOpacity } from "./highlightImages";
-	import { kClustersTreeMap, cuttingKClustersTreeMap } from "./treemapper";
+	import { kClustersTreeMap, sortingKClustersTreeMap } from "./treemapper";
 
 	// global values used and renamed for this file
 	// $: imageWidth = $treemapImageSize;
@@ -422,7 +422,7 @@
 	function render(group, root) {
 		// call the custom treemap function which returns the nodes to render in an array
 		/** @type {Node[]}*/
-		const nodesToRender = kClustersTreeMap({
+		const nodesToRender = sortingKClustersTreeMap({
 			parent: root,
 			x0: 0,
 			y0: 0,
@@ -431,6 +431,7 @@
 			kClusters: numClustersShowing,
 			imageWidth,
 			imageHeight,
+			sortOrder: (a, b) => a.node_count - b.node_count,
 		});
 
 		// renders the groups and labels the leaf nodes with class .leaf
