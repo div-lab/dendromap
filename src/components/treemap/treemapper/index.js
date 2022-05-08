@@ -340,6 +340,8 @@ export function binaryLayout(
 	// verticalShift(childA, topPadding);
 	// verticalShift(childB, topPadding);
 }
+const hasNegativeDims = (node, xMin = 0, yMin = 0) =>
+	node.x1 - node.x0 < xMin || node.y1 - node.y0 < yMin;
 
 /**
  * lays out the given root node until a certain number are hit
@@ -387,20 +389,6 @@ export function kClustersTreeMap(
 			continue breadthFirst;
 		} // check if we have a leaf node and can't go any further on this side
 
-		const hasNegativeDims = (node, xMin = 0, yMin = 0) =>
-			node.x1 - node.x0 < xMin || node.y1 - node.y0 < yMin;
-		// add the children to the queue
-		childIter: for (let i = 0; i < currParent.children.length; i++) {
-			if (clustersShowing > kClusters) break childIter; // if we already placed enough clusters, break out
-
-			// to iterate these next add them to the queue
-			const child = currParent.children[i];
-			if (!hasNegativeDims(child, imageWidth, imageHeight)) {
-				toRender.push(child);
-				queue.push(child);
-				child.isLeaf = true;
-			}
-		}
 		// layout the boxes given the current parents children
 		layoutCallback(
 			currParent,
@@ -411,6 +399,19 @@ export function kClustersTreeMap(
 			{ imageHeight, imageWidth }
 		);
 		clustersShowing++;
+
+		// add the children to the queue
+		childIter: for (let i = 0; i < currParent.children.length; i++) {
+			if (clustersShowing > kClusters) break childIter; // if we already placed enough clusters, break out
+
+			// to iterate these next add them to the queue
+			const child = currParent.children[i];
+			if (!hasNegativeDims(child, 2 * imageWidth, 2 * imageHeight)) {
+				queue.push(child);
+			}
+			toRender.push(child);
+			child.isLeaf = true;
+		}
 	}
 	return toRender;
 }
@@ -431,7 +432,6 @@ export function sortingKClustersTreeMap({
 	imageHeight = 20,
 	layoutCallback = binaryLayout,
 	sortOrder = (a, b) => b.merging_distance - a.merging_distance,
-	init = (rootNode) => (rootNode.merging_distance = 0.0),
 } = {}) {
 	// set the parent width and height
 	parent.x0 = x0;
@@ -445,8 +445,6 @@ export function sortingKClustersTreeMap({
 	let clustersShowing = 1;
 	let toRender = [parent];
 	let traversalOrder = [parent];
-	init(parent);
-	let iterations = 0;
 
 	layouter: while (traversalOrder.length > 0 && clustersShowing < kClusters) {
 		traversalOrder = traversalOrder.sort((a, b) =>
@@ -459,15 +457,6 @@ export function sortingKClustersTreeMap({
 			continue layouter;
 		}
 
-		const children = shortest.children;
-		childIter: for (let i = 0; i < children.length; i++) {
-			if (clustersShowing > kClusters) break childIter;
-			const child = children[i];
-			child.isLeaf = true;
-			toRender.push(child);
-			traversalOrder.push(child);
-		}
-
 		layoutCallback(
 			shortest,
 			shortest.x0,
@@ -477,6 +466,18 @@ export function sortingKClustersTreeMap({
 			{ imageHeight, imageWidth }
 		);
 		clustersShowing++;
+
+		const children = shortest.children;
+		childIter: for (let i = 0; i < children.length; i++) {
+			if (clustersShowing > kClusters) break childIter;
+			const child = children[i];
+
+			if (!hasNegativeDims(child, 2 * imageWidth, 2 * imageHeight)) {
+				traversalOrder.push(child);
+			}
+			child.isLeaf = true;
+			toRender.push(child);
+		}
 	}
 	console.log(toRender);
 	return toRender;
