@@ -15,6 +15,13 @@
 	export let valueFormatCallback = (value) => value;
 
 	let currentTextColor = defaultTextColor;
+	let holdingDown = false;
+	let hovering = false;
+	$: interaction = holdingDown
+		? `cursor: grabbing`
+		: hovering
+		? `cursor: grab;`
+		: "";
 	$: xScale = scaleLinear()
 		.domain([min, max])
 		.range([0 + sliderOffset, width - sliderOffset]);
@@ -34,13 +41,23 @@
 		bind:value
 		on:mouseenter={() => {
 			currentTextColor = inputTextColor;
+			hovering = true;
 		}}
-		on:mouseleave={() => (currentTextColor = defaultTextColor)}
+		on:mouseleave={() => {
+			currentTextColor = defaultTextColor;
+			hovering = false;
+		}}
+		on:mousedown={() => {
+			holdingDown = true;
+		}}
+		on:mouseup={() => {
+			holdingDown = false;
+		}}
 		type="range"
 		{min}
 		{max}
 		{step}
-		style="accent-color: var(--dark-grey); background-color: lightgrey; width:{width}px;"
+		style="accent-color: var(--dark-grey); background-color: lightgrey; width:{width}px;{interaction}"
 	/>
 </div>
 

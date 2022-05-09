@@ -32,6 +32,7 @@
 			return this.color.formatHsl();
 		}
 	}
+
 	let theme = {
 		orange: new Color("#F59C16"),
 		blue: new Color("#06B5DC"),
@@ -175,6 +176,20 @@
 		>
 		<span style="color: grey;">detail</span>
 	</Subsection>
+	introduction sentence here about this section.
+
+	<Body>
+		<Figure center>
+			<img
+				src="figures/clusters-visible.svg"
+				alt="clusters-visible"
+				width="100%"
+			/>
+		</Figure>
+		<b>Clusters Visible</b>. By clicking on an image, it will show up in the
+		Image Details section in the sidebar. Here you can get a larger view and
+		see similar images computed with their high dimensional representation.
+	</Body>
 	<Body>
 		<b>Label</b>. By clicking on an image, it will show up in the Image
 		Details section in the sidebar. Here you can get a larger view and see
