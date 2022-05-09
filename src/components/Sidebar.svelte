@@ -127,7 +127,7 @@
 				>
 					{#each options as option, i}
 						<option value={i}
-							>{option.dataset}–{option.model}</option
+							>{option.dataset} {option.model}</option
 						>
 					{/each}
 				</select>
