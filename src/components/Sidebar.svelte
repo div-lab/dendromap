@@ -168,7 +168,7 @@
 					{#if $hasClasses}
 						<Label
 							outerDivStyle="width: 120px;"
-							label="Filter Data"
+							label="Class Filter"
 						>
 							<SearchableSelect
 								on:select={(e) => {
@@ -184,7 +184,7 @@
 								}}
 								style=""
 								bind:value={$currentClassFilter}
-								placeholder="find class"
+								placeholder="Filter..."
 								items={cpyClasses ? cpyClasses : []}
 								initialValue={$currentClassFilter}
 								isClearable
