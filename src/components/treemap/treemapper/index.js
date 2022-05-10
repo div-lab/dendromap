@@ -351,6 +351,26 @@ export function binaryLayout(
 const hasNegativeDims = (node, xMin = 0, yMin = 0) =>
 	node.x1 - node.x0 < xMin || node.y1 - node.y0 < yMin;
 
+function canFitChildrenFunc({
+	imageWidth,
+	imageHeight,
+	innerPadding,
+	outerPadding,
+	topPadding,
+}) {
+	const canFitVertical =
+		2 * imageHeight + 3 * topPadding + 2 * outerPadding + innerPadding;
+	const canFitHorizontal = 2 * imageWidth + innerPadding + 2 * outerPadding;
+	const _canFitFunc = (currParent) => {
+		return hasNegativeDims(currParent, canFitHorizontal, canFitVertical);
+	};
+	return _canFitFunc;
+}
+
+function isGlobalLeaf(node) {
+	return node.children === undefined || node.children.length === 0;
+}
+
 /**
  * lays out the given root node until a certain number are hit
  * @param {{parent: d3.HierarchyNode, x0: number, y0: number, x1: number, y1: number, kClusters?: number
@@ -386,17 +406,22 @@ export function kClustersTreeMap(
 	queue.push(parent);
 	let clustersShowing = 1;
 	let toRender = [parent];
+	const canFitChildren = canFitChildrenFunc({
+		imageHeight,
+		imageWidth,
+		innerPadding,
+		outerPadding,
+		topPadding,
+	});
 
 	// while the queue is not empty and still need to place more items
 	breadthFirst: while (!queue.isEmpty() && clustersShowing < kClusters) {
 		// pop queue as the current parent
 		let currParent = queue.pop();
-		currParent.isLeaf = false;
-		const isLeaf =
-			currParent.children === undefined ||
-			currParent.children.length === 0;
-		if (isLeaf) {
-			currParent.isLeaf = true;
+
+		currParent.localLeaf = false;
+		if (isGlobalLeaf(currParent) || canFitChildren(currParent)) {
+			currParent.localLeaf = true;
 			continue breadthFirst;
 		} // check if we have a leaf node and can't go any further on this side
 
@@ -417,11 +442,9 @@ export function kClustersTreeMap(
 
 			// to iterate these next add them to the queue
 			const child = currParent.children[i];
-			if (!hasNegativeDims(child, 2 * imageWidth, 2 * imageHeight)) {
-				queue.push(child);
-			}
+			queue.push(child);
 			toRender.push(child);
-			child.isLeaf = true;
+			child.localLeaf = true;
 		}
 	}
 	return toRender;
@@ -459,15 +482,22 @@ export function sortingKClustersTreeMap({
 	let clustersShowing = 1;
 	let toRender = [parent];
 	let traversalOrder = [parent];
+	const canFitChildren = canFitChildrenFunc({
+		imageHeight,
+		imageWidth,
+		innerPadding,
+		outerPadding,
+		topPadding,
+	});
 
 	layouter: while (traversalOrder.length > 0 && clustersShowing < kClusters) {
 		traversalOrder = traversalOrder.sort((a, b) =>
 			sortOrder(a.data, b.data)
 		);
 		const currParent = traversalOrder.pop();
-		currParent.isLeaf = false;
-		if (currParent.data.leaf) {
-			currParent.isLeaf = true;
+		currParent.localLeaf = false;
+		if (isGlobalLeaf(currParent) || canFitChildren(currParent)) {
+			currParent.localLeaf = true;
 			continue layouter;
 		}
 
@@ -486,13 +516,10 @@ export function sortingKClustersTreeMap({
 			if (clustersShowing > kClusters) break childIter;
 			const child = children[i];
 
-			if (!hasNegativeDims(child, 2 * imageWidth, 2 * imageHeight)) {
-				traversalOrder.push(child);
-			}
-			child.isLeaf = true;
+			traversalOrder.push(child);
+			child.localLeaf = true;
 			toRender.push(child);
 		}
 	}
-	console.log(toRender);
 	return toRender;
 }

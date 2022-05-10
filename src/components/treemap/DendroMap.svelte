@@ -37,7 +37,7 @@
 
 	/**
 	 *  These are for the jsdoc for better autocomplete for when doing type comments
-	 * @typedef {{isLeaf: boolean, x0: number, y0: number, x1: number, y1: number}} AdditionalProperties
+	 * @typedef {{localLeaf: boolean, x0: number, y0: number, x1: number, y1: number}} AdditionalProperties
 	 * @typedef {(d3.HierarchyNode | AdditionalProperties} HierarchyNode
 	 */
 
@@ -419,10 +419,14 @@
 	 * @param {d3.Selection} group
 	 * @param {HierarchyNode} root
 	 */
-	function render(group, root) {
+	function render(group, root, sortOrder = null) {
 		// call the custom treemap function which returns the nodes to render in an array
 		/** @type {Node[]}*/
-		const nodesToRender = sortingKClustersTreeMap({
+		const breadthFirst = sortOrder === null; // if specified will default to other rendering func
+		const renderingFunc = breadthFirst
+			? kClustersTreeMap
+			: sortingKClustersTreeMap;
+		const nodesToRender = renderingFunc({
 			parent: root,
 			x0: 0,
 			y0: 0,
@@ -431,7 +435,8 @@
 			kClusters: numClustersShowing,
 			imageWidth,
 			imageHeight,
-			sortOrder: (a, b) => a.node_count - b.node_count,
+			// sortOrder: (a, b) => a.node_count - b.node_count,
+			sortOrder,
 		});
 
 		// renders the groups and labels the leaf nodes with class .leaf
@@ -440,7 +445,7 @@
 			.data(nodesToRender)
 			.join("g")
 			.attr("id", (d) => `g-${d.data.node_index}`)
-			.attr("class", (d) => (d.isLeaf ? "leaf" : ""));
+			.attr("class", (d) => (d.localLeaf ? "leaf" : ""));
 
 		node.append("rect").call(renderTreemapRect, root);
 		// I don't want the text to extend past the rectangle, so clip it off
@@ -507,7 +512,7 @@
 								let nodeIds = [];
 								function _removeRenderedHierarchy(_parent) {
 									if (
-										_parent.isLeaf ||
+										_parent.localLeaf ||
 										_parent.children === undefined
 									)
 										return;
