@@ -402,11 +402,11 @@ export function kClustersTreeMap(
 
 		// layout the boxes given the current parents children
 		layoutCallback(
-			shortest,
-			shortest.x0,
-			shortest.y0,
-			shortest.x1,
-			shortest.y1,
+			currParent,
+			currParent.x0,
+			currParent.y0,
+			currParent.x1,
+			currParent.y1,
 			{ imageHeight, imageWidth, innerPadding, topPadding, outerPadding }
 		);
 		clustersShowing++;
@@ -464,24 +464,24 @@ export function sortingKClustersTreeMap({
 		traversalOrder = traversalOrder.sort((a, b) =>
 			sortOrder(a.data, b.data)
 		);
-		const shortest = traversalOrder.pop();
-		shortest.isLeaf = false;
-		if (shortest.data.leaf) {
-			shortest.isLeaf = true;
+		const currParent = traversalOrder.pop();
+		currParent.isLeaf = false;
+		if (currParent.data.leaf) {
+			currParent.isLeaf = true;
 			continue layouter;
 		}
 
 		layoutCallback(
-			shortest,
-			shortest.x0,
-			shortest.y0,
-			shortest.x1,
-			shortest.y1,
+			currParent,
+			currParent.x0,
+			currParent.y0,
+			currParent.x1,
+			currParent.y1,
 			{ imageHeight, imageWidth, innerPadding, topPadding, outerPadding }
 		);
 		clustersShowing++;
 
-		const children = shortest.children;
+		const children = currParent.children;
 		childIter: for (let i = 0; i < children.length; i++) {
 			if (clustersShowing > kClusters) break childIter;
 			const child = children[i];
