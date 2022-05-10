@@ -2,6 +2,6 @@
 
 <style>
 	code {
-		font-weight: 700;
+		font-weight: 550;
 	}
 </style>

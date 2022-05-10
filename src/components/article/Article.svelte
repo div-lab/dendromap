@@ -1,5 +1,5 @@
 <script>
-	import DendroMap from "./DendroMap.svelte";
+	import Name from "./Name.svelte";
 	import Section from "./Section.svelte";
 	import Subsection from "./Subsection.svelte";
 	import Body from "./Body.svelte";
@@ -43,10 +43,10 @@
 </script>
 
 <Writing>
-	<Section>What is <DendroMap />?</Section>
+	<Section>What is <Name />?</Section>
 	<Body>
-		<DendroMap /> is an interactive tool to explore large-scale image datasets
-		used for machine learning.
+		<Name /> is an interactive tool to explore large-scale image datasets used
+		for machine learning.
 	</Body>
 	<Body>
 		A deep understanding of your data can be vital to train your model
@@ -54,15 +54,14 @@
 		large number of images, exploration is incomprehensible.
 	</Body>
 	<Body>
-		<DendroMap /> adds the much needed structure by grouping together similar
-		images. Then, an overview of the similar groups of images are displayed in
-		a treemap. For scalable exploration, you can click on a cluster in the treemap
-		to
+		<Name /> adds the much needed structure by grouping together similar images.
+		Then, an overview of the similar groups of images are displayed in a treemap.
+		For scalable exploration, you can click on a cluster in the treemap to
 		<i>zoom</i> and reveal more clusters of images within that group.
 	</Body>
 	<Body>
-		If you're interested in learning more, <b>click</b> to scroll on one of the
-		three sections below.</Body
+		If you're interested in learning more, <span class="medium">click</span>
+		to scroll on one of the three sections below.</Body
 	>
 	<div style="display: flex; justify-content:space-between;">
 		<SectionPreview
@@ -86,14 +85,13 @@
 			<div style="font-size: 20px;">
 				<span
 					style="color: {theme.orange}; font-weight: {theme.bolded};"
-					>Customize</span
+					>Interactions</span
 				>
 				<span style="color: grey;">and</span>
 				<span
 					style="color: {theme.orange}; font-weight: {theme.bolded};"
-					>Analyze</span
+					>Customization</span
 				>
-				<span style="color: grey;">detail</span>
 			</div>
 		</SectionPreview>
 		<SectionPreview
@@ -110,7 +108,7 @@
 		</SectionPreview>
 	</div>
 	<Body>
-		<DendroMap /> was created by
+		<Name /> was created by
 		{#each people as person, i}
 			<Link href={person.url} openNewTab>{person.name}</Link
 			>{#if i < people.length - 2},{" "}{:else if i < people.length - 1},
@@ -132,11 +130,10 @@
 	</Subsection>
 
 	<Body>
-		<DendroMap /> displays a preview of the data and provides exploration by
-		clicking to zoom into any cluster you want! If you prefer the tree explanation,
-		each image groups overviews that portion of the tree. By clicking into a
-		group, you are traversing down the tree to finer-grained clusters under that
-		hierarchy.
+		<Name /> displays a preview of the data and provides exploration by clicking
+		to zoom into any cluster you want! If you prefer the tree explanation, each
+		image groups overviews that portion of the tree. By clicking into a group,
+		you are traversing down the tree to finer-grained clusters under that hierarchy.
 	</Body>
 
 	<Body>
@@ -168,15 +165,19 @@
 		style="font-weight: {theme.light};"
 	>
 		<span style="color: {theme.orange}; font-weight: {theme.bolded};"
-			>Customize</span
+			>Interactions</span
 		>
 		<span style="color: grey;">and</span>
 		<span style="color: {theme.orange}; font-weight: {theme.bolded};"
-			>Analyze</span
+			>Customization</span
 		>
-		<span style="color: grey;">detail</span>
 	</Subsection>
-	introduction sentence here about this section.
+
+	<Body>
+		This section contains additional information for how the core
+		interactions work and how they can customize or add to the exploration
+		and analysis of images. The features are listed out in paragraphs below.
+	</Body>
 
 	<Body>
 		<Figure center>
@@ -186,24 +187,47 @@
 				width="100%"
 			/>
 		</Figure>
-		<b>Clusters Visible</b>. By clicking on an image, it will show up in the
-		Image Details section in the sidebar. Here you can get a larger view and
-		see similar images computed with their high dimensional representation.
+		<div style="margin-top: 20px;" />
+		<b>Clusters Visible</b>. You can increase the number of image clusters
+		you see by increasing this slider. More clusters showing will show more
+		splits between images for a more detailed exploration at each level of
+		the tree. Alternatively, having less clusters showing will create more
+		of a high-level overview of the images.
 	</Body>
-	<Body>
-		<b>Label</b>. By clicking on an image, it will show up in the Image
-		Details section in the sidebar. Here you can get a larger view and see
-		similar images computed with their high dimensional representation.
+	<Body style="margin-top: 10px;">
+		<Figure center>
+			<img
+				src="figures/interaction-example1.svg"
+				alt="clusters-visible"
+				width="75%"
+			/>
+		</Figure>
+		<b>Class Filter and Highlighting</b>. If classes are present, you can
+		filter the <Name /> by typing out or selecting a class that you want to only
+		see with the <span class="medium">Class Filter</span>. If class
+		predictions are also available, you can toggle to highlight the
+		misclassified images with the
+		<span class="medium">Focus Misclassified</span>
+		switch or toggle to highlight them with a red border using the
+		<span class="medium">Highlight Misclassified</span> switch.
 	</Body>
-	<Body>
-		<b>Class Table</b>. By clicking on an image, it will show up in the
-		Image Details section in the sidebar. Here you can get a larger view and
-		see similar images computed with their high dimensional representation.
-	</Body>
-	<Body>
-		<b>Image Click</b>. By clicking on an image, it will show up in the
-		Image Details section in the sidebar. Here you can get a larger view and
-		see similar images computed with their high dimensional representation.
+	<Body style="margin-top: 10px;">
+		<Figure center>
+			<img
+				src="figures/class-table.svg"
+				alt="class-table-details"
+				width="75%"
+			/>
+		</Figure>
+		<b>Class Table and Image Details</b>. When the actual class and
+		predicted class are present, the <span class="medium">Class Table</span>
+		shows up in the sidebar. This table shows the counts and important rates,
+		like accuracy, for class-level error analysis. You can hover over an entry
+		in the table to have the corresponding images that went into the calculation
+		highlighted in the <Name />. For a closer look at an image, you can also
+		click on the image itself to see it larger and view similar images
+		computed from its high-dimensional representation inside the
+		<span class="medium">Image Details</span>.
 	</Body>
 
 	<Subsection
@@ -220,14 +244,14 @@
 		If you are interested in learning about
 		<ul class="contributions">
 			<li>
-				the <DendroMap /> motivations
+				the <Name /> motivations
 			</li>
 			<li>
-				how we created the <DendroMap /> visualization
+				how we created the <Name /> visualization
 			</li>
 			<li>
-				<DendroMap />'s effectiveness: user study on <DendroMap /> compared
-				to t-SNE grid for exploration
+				<Name />'s effectiveness: user study on <Name /> compared to t-SNE
+				grid for exploration
 			</li>
 		</ul>
 		and more, please check out our <Link href="https://arxiv.org" openNewTab
@@ -249,5 +273,8 @@
 	.bottom-space {
 		height: 1px;
 		margin-bottom: 100px;
+	}
+	.medium {
+		font-weight: 500;
 	}
 </style>

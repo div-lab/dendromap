@@ -37,7 +37,7 @@
 	import Switch from "./sidebarComponents/Switch.svelte";
 	import Slider from "./sidebarComponents/Slider.svelte";
 	import HelpIcon from "./misc/HelpIcon.svelte";
-	import DendroMap from "./article/DendroMap.svelte";
+	import Name from "./article/Name.svelte";
 
 	const dispatch = createEventDispatcher();
 
@@ -113,7 +113,7 @@
 					articleSidebarOpen = !articleSidebarOpen;
 				}}
 			>
-				<b>Open Article</b>: What is <DendroMap />?
+				<b>Open Article</b>: What is <Name />?
 			</button>
 		</div>
 		{#if !$hideGlobalDetails}
