@@ -1,6 +1,6 @@
 <script>
 	import * as d3 from "d3";
-	import { onMount } from "svelte";
+	import { onMount, createEventDispatcher } from "svelte";
 	import { imagesEndpoint } from "../../stores/endPoints";
 	import {
 		selectedParent,
@@ -29,6 +29,25 @@
 	} from "./util";
 	import { highlightImages, resetOpacity } from "./highlightImages";
 	import { kClustersTreeMap, sortingKClustersTreeMap } from "./treemapper";
+
+	const dispatch = createEventDispatcher();
+	const dispatchNames = {
+		image: {
+			click: "imageClick",
+			mouseEnter: "imageMouseEnter",
+			mouseLeave: "imageMouseLeave",
+		},
+		cluster: {
+			click: "clusterClick",
+			mouseEnter: "clusterMouseEnter",
+			mouseLeave: "clusterMouseLeave",
+		},
+		parent: {
+			click: "parentClick",
+			mouseEnter: "parentMouseEnter",
+			mouseLeave: "parentMouseLeave",
+		},
+	};
 
 	// global values used and renamed for this file
 	// $: imageWidth = $treemapImageSize;
@@ -351,10 +370,12 @@
 			.attr("href", (d) => `${imageFilepath}/${d.filename}`)
 			.attr("cursor", "pointer")
 			.on("click", function (event, d) {
+				dispatch(dispatchNames.image.click, d);
 				selectedImage.set(d); //pass to sidebar
 			})
 			.attr("clip-path", d.clip)
 			.on("mouseenter", function (event, d) {
+				dispatch(dispatchNames.image.mouseEnter, d);
 				if ($highlightSimilarImages) {
 					highlightImages({
 						imageGroup: svg.selectAll("image"),
@@ -366,6 +387,7 @@
 				}
 			})
 			.on("mouseleave", function (event, d) {
+				dispatch(dispatchNames.image.mouseLeave, d);
 				if ($highlightSimilarImages) {
 					resetOpacity({ highlightedOpacity });
 					highlightWrong(
