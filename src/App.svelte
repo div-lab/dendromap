@@ -26,6 +26,7 @@
 		highlightSimilarImages,
 		highlightIncorrectImages,
 		showMisclassifications,
+		selectedParent,
 	} from "./stores/sidebarStore";
 
 	import Sidebar from "./components/Sidebar.svelte";
@@ -176,16 +177,7 @@
 		updateSelection(selectedOptionIndex);
 	}
 	$: {
-		console.log(dendrogramData);
-		console.log(selectedOption);
-		console.log(
-			$hasClasses,
-			$hasSimilar,
-			$hasPredictedClass,
-			$hasTrueClass
-		);
-		// what else should be global??
-		//
+		selectedParent.set(currentParentCluster);
 	}
 </script>
 

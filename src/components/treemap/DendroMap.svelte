@@ -1,30 +1,7 @@
 <script>
 	import * as d3 from "d3";
 	import { onMount, createEventDispatcher } from "svelte";
-	import { imagesEndpoint } from "../../stores/endPoints";
-	import {
-		selectedParent,
-		showMisclassifications,
-		treemapImageSize,
-		treemapNumClusters,
-		highlightSimilarImages,
-		changingSizes,
-		hideLabelAccuracy,
-		hideLabelCoverage,
-		highlightIncorrectImages,
-		hideMisclassifiedImages,
-		currentNodesShowing,
-	} from "../../stores/sidebarStore";
-	import {
-		globalRootNode,
-		incorrectColor,
-	} from "../../stores/globalDataStore";
-	import {
-		treemapColorGenerator,
-		toPercent,
-		ID,
-		forEachSelection,
-	} from "./util";
+	import { treemapColorGenerator, ID, forEachSelection } from "./util";
 	import { highlightImages, resetOpacity } from "./highlightImages";
 	import { kClustersTreeMap, sortingKClustersTreeMap } from "./treemapper";
 
@@ -72,8 +49,6 @@
 	export let imageHeight;
 	export let imageWidth;
 	export let numClustersShowing = 8;
-	export let imagesFocused = [];
-	export let imagesOutlined = [];
 	export let clusterLabelCallback = (d) => {
 		const totalLabel = `${d.data.node_count} image${
 			d.data.node_count > 1 ? "s" : ""
@@ -96,13 +71,13 @@
 	export let hiddenOpacity = 0.25;
 	export let topLabelSpace = 20;
 	export let imageFilepath;
-	export let focusImagesOnHover = false;
 	export let imagesToFocus = [];
-	export let imagesToOutline = [];
 	export let labelColorCallback = (d) => (d.height < 5 ? "white" : "black");
 	export let labelSizeCallback = (d) => "10px";
 	export let outlineMisclassified = undefined;
 	export let focusMisclassified = undefined;
+	export let misclassificationColor = "red";
+	export let outlineStrokeWidth = "2px";
 
 	/**@type {d3.Selection}*/
 	let group;
@@ -136,7 +111,6 @@
 
 		// render the treemap
 		group = svg.append("g").call(render, dendrogramData);
-		selectedParent.set(dendrogramData); // pass to sidebar
 		currentParentCluster = dendrogramData;
 	}
 	onMount(() => {
@@ -204,7 +178,6 @@
 			.duration(transitionSpeed)
 			.call((t) => group1.transition(t).call(position, to));
 
-		selectedParent.set(to); // pass to sidebar
 		currentParentCluster = to;
 	}
 
@@ -254,7 +227,6 @@
 					.call(position, to)
 			); // transition in the new group
 
-		selectedParent.set(to); // pass to sidebar
 		currentParentCluster = to;
 	}
 
@@ -615,7 +587,7 @@
 		group,
 		showMisclassifications,
 		focus,
-		{ borderWidth = "1px", borderColor = incorrectColor }
+		{ borderWidth = "1px", borderColor = "red" }
 	) {
 		function _showingStroke(d, color, width) {
 			d.style = `${width} solid ${color}`;
@@ -657,6 +629,10 @@
 	function onSizeChanges(numClustersShowing, imageWidth, imageHeight) {
 		group.selectChildren("g").remove();
 		render(group, currentParentCluster);
+		highlightWrong(group, outlineMisclassified, focusMisclassified, {
+			borderWidth: outlineStrokeWidth,
+			borderColor: misclassificationColor,
+		});
 	}
 	$: {
 		if (svelteSvg) {
@@ -670,8 +646,8 @@
 			focusMisclassified !== undefined
 		) {
 			highlightWrong(group, outlineMisclassified, focusMisclassified, {
-				borderWidth: "1px",
-				borderColor: incorrectColor,
+				borderWidth: outlineStrokeWidth,
+				borderColor: misclassificationColor,
 			});
 		}
 	}
