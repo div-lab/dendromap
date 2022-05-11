@@ -4,9 +4,7 @@
 	import { imagesEndpoint } from "../../stores/endPoints";
 	import {
 		selectedParent,
-		selectedImage,
 		showMisclassifications,
-		nodeHovering,
 		treemapImageSize,
 		treemapNumClusters,
 		highlightSimilarImages,
@@ -49,6 +47,15 @@
 		},
 	};
 
+	function exportDataUp(name, payload, element, event) {
+		const formatted = {
+			data: payload,
+			element,
+			event,
+		};
+		dispatch(name, formatted);
+	}
+
 	// global values used and renamed for this file
 	// $: imageWidth = $treemapImageSize;
 	// $: imageHeight = $treemapImageSize;
@@ -76,7 +83,7 @@
 	export let imageTitleCallback = (d) =>
 		`Click to select image ${d.instance_index}`;
 	export let clusterColorInterpolateCallback = d3.interpolateGreys;
-	export let currentParentCluster = null;
+	export let currentParentCluster = null; // bind
 
 	// style and dimensions
 	export let width = 1600;
@@ -89,6 +96,13 @@
 	export let hiddenOpacity = 0.25;
 	export let topLabelSpace = 20;
 	export let imageFilepath;
+	export let focusImagesOnHover = false;
+	export let imagesToFocus = [];
+	export let imagesToOutline = [];
+	export let labelColorCallback = (d) => (d.height < 5 ? "white" : "black");
+	export let labelSizeCallback = (d) => "10px";
+	export let outlineMisclassified = undefined;
+	export let focusMisclassified = undefined;
 
 	/**@type {d3.Selection}*/
 	let group;
@@ -370,37 +384,14 @@
 			.attr("href", (d) => `${imageFilepath}/${d.filename}`)
 			.attr("cursor", "pointer")
 			.on("click", function (event, d) {
-				dispatch(dispatchNames.image.click, d);
-				selectedImage.set(d); //pass to sidebar
+				exportDataUp(dispatchNames.image.click, d, this, event);
 			})
 			.attr("clip-path", d.clip)
 			.on("mouseenter", function (event, d) {
-				dispatch(dispatchNames.image.mouseEnter, d);
-				if ($highlightSimilarImages) {
-					highlightImages({
-						imageGroup: svg.selectAll("image"),
-						instancesToHighlight: d.similar,
-						hiddenOpacity,
-						highlightedOpacity,
-					});
-					d3.select(this).attr("opacity", highlightedOpacity);
-				}
+				exportDataUp(dispatchNames.image.mouseEnter, d, this, event);
 			})
 			.on("mouseleave", function (event, d) {
-				dispatch(dispatchNames.image.mouseLeave, d);
-				if ($highlightSimilarImages) {
-					resetOpacity({ highlightedOpacity });
-					highlightWrong(
-						group,
-						$showMisclassifications,
-						$changingSizes,
-						{
-							borderWidth: "1px",
-							borderColor: incorrectColor,
-						},
-						$highlightIncorrectImages
-					);
-				}
+				exportDataUp(dispatchNames.image.mouseLeave, d, this, event);
 			});
 		groupRect.selectAll("image").append("title").text(imageTitleCallback);
 	};
@@ -478,11 +469,7 @@
 			})
 			.append("use")
 			.attr("xlink:href", (d) => d.rect.href);
-		node.append("text").call(
-			renderLabel,
-			!$hideLabelAccuracy,
-			!$hideLabelCoverage
-		);
+		node.append("text").call(renderLabel);
 		// for each <g> that shows a cluster on top, render the images on top
 		const currentLeaves = group.selectAll(".leaf"); // local leaves basically
 		forEachSelection(currentLeaves, renderImages);
@@ -513,6 +500,7 @@
 			.attr("stroke-width", 1.5)
 			.attr("class", "treemap-rect")
 			.on("click", function (event, child) {
+				exportDataUp(dispatchNames.cluster.click, child, this, event);
 				const clickedIsLeaf = child.data.leaf;
 				// leaves must not be clicked
 				if (!clickedIsLeaf) {
@@ -570,18 +558,28 @@
 				}
 			})
 			.on("mouseover", function (event, child) {
+				exportDataUp(
+					dispatchNames.cluster.mouseEnter,
+					child,
+					this,
+					event
+				);
 				if (child !== root && !child.data.leaf) {
 					d3.select(this).attr("stroke", "darkgrey");
 				}
-				nodeHovering.set(child);
 			})
 			.on("mouseout", function (event, child) {
+				exportDataUp(
+					dispatchNames.cluster.mouseLeave,
+					child,
+					this,
+					event
+				);
 				if (child !== root) {
 					d3.select(this)
 						.attr("stroke", child.strokeColor)
 						.attr("fill", child.rectColor);
 				}
-				nodeHovering.set(null); // this can be omitted
 			});
 		rect.append("title").text((d, i) => {
 			let clusterLabel = ``;
@@ -599,40 +597,11 @@
 			d.data.leaf || d === dendrogramData ? "default" : "pointer"
 		);
 	}
-	function renderLabel(text, showAccuracy, showCoverage) {
+	function renderLabel(text) {
 		text.attr("clip-path", (d) => d.clip)
 			.text(clusterLabelCallback)
-			// (d) => {
-			// 	console.log(d);
-			// 	let totalLabel = `${d.data.node_count} image${
-			// 		d.data.node_count > 1 ? "s" : ""
-			// 	}`;
-			// 	if (showAccuracy) {
-			// 		let accuracy = d.data.accuracy;
-			// 		if (accuracy === undefined) {
-			// 			const leafCorrect =
-			// 				d.data.predicted_class === d.data.true_class;
-			// 			accuracy = leafCorrect ? 1.0 : 0.0;
-			// 		}
-			// 		let accuracyLabel = `${toPercent(accuracy)} accuracy`;
-			// 		totalLabel += `, ${accuracyLabel}`;
-			// 	}
-			// 	if (showCoverage) {
-			// 		let incorrectCount =
-			// 			d.data.node_count - d.data.correct_count;
-			// 		let coverage = incorrectCount / ogRootCount;
-			// 		if (coverage === undefined) {
-			// 			const leafCorrect =
-			// 				d.data.predicted_class === d.data.true_class;
-			// 			coverage = leafCorrect ? 0.0 : 1.0 / ogRootCount;
-			// 		}
-			// 		let coverageLabel = `${toPercent(coverage)} coverage`;
-			// 		totalLabel += `, ${coverageLabel}`;
-			// 	}
-			// 	return totalLabel;
-			// })
-			.attr("fill", (d) => (d.height < 5 ? "white" : "black"))
-			.style("font-size", "10px")
+			.attr("fill", labelColorCallback)
+			.style("font-size", labelSizeCallback)
 			.attr("class", "label-text");
 	}
 
@@ -642,24 +611,11 @@
 		svg.selectAll("g").remove();
 		init();
 	}
-	// when the number of clusters is changed in the sidebar or image size, reset the treemap with those dimensions
-	$: {
-		if (svelteSvg && $changingSizes) {
-			// let svg = d3.select(svelteSvg);
-			// // resetWithNewSettings(svg, $treemapNumClusters, $treemapImageSize);
-			// make it so this is not called otherwise
-			if ($treemapNumClusters && $treemapImageSize) {
-				group.selectChildren("g").remove();
-				render(group, currentParentCluster);
-			}
-		}
-	}
 	function highlightWrong(
 		group,
 		showMisclassifications,
-		changingSizes,
-		{ borderWidth = "1px", borderColor = incorrectColor },
-		focus
+		focus,
+		{ borderWidth = "1px", borderColor = incorrectColor }
 	) {
 		function _showingStroke(d, color, width) {
 			d.style = `${width} solid ${color}`;
@@ -694,23 +650,44 @@
 					_showingStroke(d, "transparent", borderWidth)
 				);
 			}
-			group
-				.selectAll("text")
-				.call(renderLabel, !$hideLabelAccuracy, !$hideLabelCoverage);
+			group.selectAll("text").call(renderLabel);
 		}
 	}
+
+	function onSizeChanges(numClustersShowing, imageWidth, imageHeight) {
+		group.selectChildren("g").remove();
+		render(group, currentParentCluster);
+	}
 	$: {
-		if (!$hideMisclassifiedImages) {
-			highlightWrong(
-				group,
-				$showMisclassifications,
-				$changingSizes,
-				{
-					borderWidth: "1px",
-					borderColor: incorrectColor,
-				},
-				$highlightIncorrectImages
-			);
+		if (svelteSvg) {
+			onSizeChanges(numClustersShowing, imageWidth, imageHeight); // so cursed that this works
+		}
+	}
+
+	$: {
+		if (
+			outlineMisclassified !== undefined ||
+			focusMisclassified !== undefined
+		) {
+			highlightWrong(group, outlineMisclassified, focusMisclassified, {
+				borderWidth: "1px",
+				borderColor: incorrectColor,
+			});
+		}
+	}
+	let focusedHistory = false;
+	$: {
+		const toFocusNotEmpty = imagesToFocus.length > 0;
+		if (toFocusNotEmpty && svg) {
+			highlightImages({
+				imageGroup: svg.selectAll("image"),
+				instancesToHighlight: imagesToFocus,
+				hiddenOpacity,
+				highlightedOpacity,
+			});
+			focusedHistory = true;
+		} else if (!toFocusNotEmpty && focusedHistory && svg) {
+			resetOpacity({ highlightedOpacity });
 		}
 	}
 </script>
@@ -719,7 +696,6 @@
 
 <style>
 	svg {
-		/* border: 1px solid gray; */
 		overflow: hidden;
 	}
 </style>

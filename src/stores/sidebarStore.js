@@ -47,3 +47,4 @@ export const hasTrueClass = writable(false);
 export const hasPredictedClass = writable(false);
 export const hasSimilar = writable(false);
 export const hasAccuracy = writable(false);
+export const imagesToHighlight = writable([]);

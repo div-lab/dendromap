@@ -5,6 +5,7 @@
 		hasPredictedClass,
 		hasTrueClass,
 		hasSimilar,
+		imagesToHighlight,
 	} from "../stores/sidebarStore";
 	import {
 		globalLeafNodesObject,
@@ -113,14 +114,11 @@
 										$globalLeafNodesObject.idMap.get(
 											simInstanceId
 										);
-									highlightImages({
-										imageGroup: d3.selectAll("image"),
-										instancesToHighlight: [simInstanceId],
-									});
+									imagesToHighlight.set([simInstanceId]);
 								}}
 								on:mouseleave={() => {
+									imagesToHighlight.set([]);
 									imageHover = null;
-									resetOpacity();
 								}}
 							/>
 						{/each}

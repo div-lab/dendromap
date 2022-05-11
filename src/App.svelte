@@ -21,6 +21,11 @@
 		hasPredictedClass,
 		hasSimilar,
 		hasAccuracy,
+		selectedImage,
+		imagesToHighlight,
+		highlightSimilarImages,
+		highlightIncorrectImages,
+		showMisclassifications,
 	} from "./stores/sidebarStore";
 
 	import Sidebar from "./components/Sidebar.svelte";
@@ -146,7 +151,7 @@
 
 	// indicators of when things are done or if we have a certain item
 	let changedDataset = false;
-	let articleOpen = true;
+	let articleOpen = false;
 	let showTreemap = false;
 	let classClusteringsPresent;
 
@@ -245,6 +250,9 @@
 					width={Math.max(screen.width - 600, 800)}
 					height={$totalHeight}
 					numClustersShowing={$treemapNumClusters}
+					imagesToFocus={$imagesToHighlight}
+					outlineMisclassified={$showMisclassifications}
+					focusMisclassified={$highlightIncorrectImages}
 					clusterLabelCallback={(d) => {
 						let totalLabel = `${d.data.node_count} image${
 							d.data.node_count > 1 ? "s" : ""
@@ -270,12 +278,34 @@
 						return "";
 					}}
 					bind:currentParentCluster
-					on:imageClick={() => {}}
-					on:imageMouseEnter={() => {}}
-					on:imageMouseLeave={() => {}}
-					on:clusterClick={() => {}}
-					on:clusterMouseEnter={() => {}}
-					on:clusterMouseLeave={() => {}}
+					on:imageClick={(e) => {
+						const { data, el, event } = e.detail;
+						selectedImage.set(data); // pass to the sidebar
+					}}
+					on:imageMouseEnter={(e) => {
+						const { data, el, event } = e.detail;
+						if ($highlightSimilarImages) {
+							imagesToHighlight.set([
+								data.instance_index,
+								...data.similar,
+							]);
+						}
+					}}
+					on:imageMouseLeave={(e) => {
+						const { data, el, event } = e.detail;
+						if ($highlightSimilarImages) {
+							imagesToHighlight.set([]);
+						}
+					}}
+					on:clusterClick={({ detail }) => {
+						// console.log("cluster mouse click", detail);
+					}}
+					on:clusterMouseEnter={({ detail }) => {
+						// console.log("cluster mouse enter", detail);
+					}}
+					on:clusterMouseLeave={({ detail }) => {
+						// console.log("cluster mouse leave", detail);
+					}}
 				/>
 			{:else}
 				<div style="display:flex; gap:10px; align-items:center;">

@@ -10,6 +10,7 @@
 	import {
 		showMisclassifications,
 		hideSummaryClassTable,
+		imagesToHighlight,
 	} from "../../stores/sidebarStore";
 	/* Put stuff here */
 	export let classes = [];
@@ -409,10 +410,10 @@
 								(node) => node.instance_index
 							);
 
-							highlightImages({ instancesToHighlight });
+							imagesToHighlight.set(instancesToHighlight);
 						}}
 						on:mouseleave={() => {
-							resetOpacity();
+							imagesToHighlight.set([]);
 						}}
 					>
 						<Bar
@@ -432,10 +433,10 @@
 								.classNameWasTheTrueAndPredClass.map(
 									(node) => node.instance_index
 								);
-							highlightImages({ instancesToHighlight });
+							imagesToHighlight.set(instancesToHighlight);
 						}}
 						on:mouseleave={() => {
-							resetOpacity();
+							imagesToHighlight.set([]);
 						}}
 					>
 						<Rate
@@ -453,10 +454,10 @@
 								.classNameWasTheTrueClassAndWrong.map(
 									(node) => node.instance_index
 								);
-							highlightImages({ instancesToHighlight });
+							imagesToHighlight.set(instancesToHighlight);
 						}}
 						on:mouseleave={() => {
-							resetOpacity();
+							imagesToHighlight.set([]);
 						}}
 					>
 						<Rate
@@ -474,10 +475,10 @@
 								.classNameWasThePredClassAndWrong.map(
 									(node) => node.instance_index
 								);
-							highlightImages({ instancesToHighlight });
+							imagesToHighlight.set(instancesToHighlight);
 						}}
 						on:mouseleave={() => {
-							resetOpacity();
+							imagesToHighlight.set([]);
 						}}
 					>
 						<Rate
