@@ -49,15 +49,19 @@
 		for machine learning.
 	</Body>
 	<Body>
-		A deep understanding of your data can be vital to train your model
-		efficiently and effectively; however, due to the lack of metadata and
-		large number of images, exploration is incomprehensible.
+		A deep understanding of your data can be vital to train or debug your
+		model effectively. However, due to the lack of metadata and large-scale
+		of image datasets, it can be difficult to get any insight into your
+		data.
 	</Body>
 	<Body>
-		<Name /> adds the much needed structure by grouping together similar images.
-		Then, an overview of the similar groups of images are displayed in a treemap.
-		For scalable exploration, you can click on a cluster in the treemap to
-		<i>zoom</i> and reveal more clusters of images within that group.
+		<Name /> adds structure to the data by grouping together similar images.
+		Then, hierarchies of similar image groups are displayed in a modified treemap
+		for you to explore. To reveal more images and clusters, click on a rectangle
+		in the <Name /> to <i>zoom-in</i> to that group of images. To
+		<i>zoom-out</i>, click on the outermost parent rectangle. Clicking on an
+		image will reveal more information in the
+		<span class="medium">Image Details</span>.
 	</Body>
 	<Body>
 		If you're interested in learning more, <span class="medium">click</span>
