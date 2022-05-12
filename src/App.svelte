@@ -219,6 +219,7 @@
 					imageHeight={$treemapImageSize}
 					width={Math.max(screen.width - 600, 600)}
 					height={835}
+					renderingMethod={"breadth"}
 					numClustersShowing={$treemapNumClusters}
 					imagesToFocus={$imagesToHighlight}
 					outlineMisclassified={$showMisclassifications}
@@ -264,14 +265,14 @@
 							imagesToHighlight.set([]);
 						}
 					}}
-					on:clusterClick={({ detail }) => {
-						// console.log("cluster mouse click", detail);
+					on:clusterClick={(e) => {
+						// const { data, el, event } = e.detail;
 					}}
 					on:clusterMouseEnter={({ detail }) => {
-						// console.log("cluster mouse enter", detail);
+						// const { data, el, event } = e.detail;
 					}}
 					on:clusterMouseLeave={({ detail }) => {
-						// console.log("cluster mouse leave", detail);
+						// const { data, el, event } = e.detail;
 					}}
 				/>
 			{:else}

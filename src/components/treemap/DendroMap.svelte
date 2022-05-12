@@ -79,6 +79,33 @@
 	export let misclassificationColor = "red";
 	export let outlineStrokeWidth = "2px";
 
+	/** @type {"breadth" | "min_merging_distance" | "max_node_count" | "custom_sort"} */
+	export let renderingMethod = "breadth";
+	export let customSort = () => {
+		throw new Error(
+			"specify your own sorting function here if you picked random for renderingMethod"
+		);
+	};
+
+	const kClustersTreemapCustomSort = (obj, sort) => {
+		obj.sortOrder = sort;
+		return sortingKClustersTreeMap(obj);
+	};
+	const kClustersMaxCount = (obj) =>
+		kClustersTreemapCustomSort(obj, (a, b) => a.node_count - b.node_count);
+	const kClustersMinMerging = (obj) =>
+		kClustersTreemapCustomSort(
+			obj,
+			(a, b) => b.merging_distance - a.merging_distance
+		);
+	$: renderingOptions = {
+		breadth: kClustersTreeMap,
+		min_merging_distance: kClustersMinMerging,
+		max_node_count: kClustersMaxCount,
+		custom_sort: customSort,
+	};
+	$: currentRenderingMethod = renderingOptions[renderingMethod];
+
 	/**@type {d3.Selection}*/
 	let group;
 	/**@type {d3.Selection}*/
@@ -406,13 +433,9 @@
 	 * @param {d3.Selection} group
 	 * @param {HierarchyNode} root
 	 */
-	function render(group, root, sortOrder = null) {
+	function render(group, root, renderingFunc = currentRenderingMethod) {
 		// call the custom treemap function which returns the nodes to render in an array
 		/** @type {Node[]}*/
-		const breadthFirst = sortOrder === null; // if specified will default to other rendering func
-		const renderingFunc = breadthFirst
-			? kClustersTreeMap
-			: sortingKClustersTreeMap;
 		const nodesToRender = renderingFunc({
 			parent: root,
 			x0: 0,
@@ -422,8 +445,6 @@
 			kClusters: numClustersShowing,
 			imageWidth,
 			imageHeight,
-			// sortOrder: (a, b) => a.node_count - b.node_count,
-			sortOrder,
 		});
 
 		// renders the groups and labels the leaf nodes with class .leaf
