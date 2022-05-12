@@ -6,10 +6,7 @@
 		hasSimilar,
 		imagesToHighlight,
 	} from "../stores/sidebarStore";
-	import {
-		globalLeafNodesObject,
-		incorrectColor,
-	} from "../stores/globalDataStore";
+	import { globalLeafNodesObject } from "../stores/globalDataStore";
 	import { imagesEndpoint } from "../stores/endPoints";
 	import Label from "./sidebarComponents/Label.svelte";
 
@@ -19,6 +16,7 @@
 	export let selectedImageHeight = 150;
 	export let selectedImageWidth = 150;
 	export let showSimilarImages = true;
+	export let incorrectColor = "red";
 
 	const labelWidth = 150;
 	let imageHover = null;
