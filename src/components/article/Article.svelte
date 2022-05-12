@@ -134,33 +134,32 @@
 	</Subsection>
 
 	<Body>
-		<Name /> displays a preview of the data and provides exploration by clicking
-		to zoom into any cluster you want! If you prefer the tree explanation, each
-		image groups overviews that portion of the tree. By clicking into a group,
-		you are traversing down the tree to finer-grained clusters under that hierarchy.
+		<Name /> starts by displaying a user-specified number of image clusters (default
+		is 8). Each image group represents the preview for that hierarchy of similar
+		images. You can click on a cluster in the <Name /> to <i>zoom-in</i> and
+		take up the entire screen with only those image groups. You can continue
+		to <i>zoom</i> or choose to <i>zoom-out</i> by clicking the outermost parent
+		cluster. Below, are examples of these interactions.
 	</Body>
 
 	<Body>
 		<Figure center>
-			<img src="figures/zoom-in.svg" alt="zoom-in" width="100%" />
+			<img src="figures/zoom-in.svg" alt="zoom-in" width="85%" />
 		</Figure>
-		<b>Zooming In</b>. By clicking on a colored rectangle that houses a
-		group of images, you can zoom into that image group with a zooming
-		animation. This will reveal the specified number of clusters with those
-		images.
+		<b>Zooming In</b>. By clicking on a grey-colored rectangle, you can
+		<i>zoom-in</i> to that image group and reveal more clusters.
 	</Body>
 	<Body>
 		<Figure center>
-			<img src="figures/zoom-out.svg" alt="zoom-out" width="60%" />
+			<img src="figures/zoom-out.svg" alt="zoom-out" width="50%" />
 		</Figure>
-		<b>Zooming Out</b>. By clicking on the current parent cluster (the outer
-		most rectangle), you can zoom back to where you were before. This
-		corresponds to zooming out animation and going back to an overview.
+		<b>Zooming Out</b>. By clicking on the outermost parent cluster, you can
+		<i>zoom-out</i> and go back to where you were before.
 	</Body>
 
 	<Body>
-		With these two interactions alone you can explore the data down to the
-		instances themselves!
+		With these two interactions alone you can explore groups of similar
+		images down to the instances themselves (even for large datasets).
 	</Body>
 
 	<Subsection
