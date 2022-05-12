@@ -1,0 +1,16 @@
+<script>
+	export let style = "";
+	export let id = "";
+</script>
+
+<p {style} {id} class="body-component">
+	<slot />
+</p>
+
+<style>
+	.body-component {
+		line-height: 1.75;
+		font-size: 17px;
+		color: #494949;
+	}
+</style>

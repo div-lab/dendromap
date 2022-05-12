@@ -1,24 +1,14 @@
 <script>
 	import { onMount } from "svelte";
-	import { flip } from "svelte/animate";
 	import Bar from "./Bar.svelte";
 	import { highlightImages, resetOpacity } from "../treemap/highlightImages";
 	import Label from "../sidebarComponents/Label.svelte";
 	import Rate from "./Rate.svelte";
-	import BigRate from "./BigRate.svelte";
 	import Switch from "../sidebarComponents/Switch.svelte";
-	import {
-		showMisclassifications,
-		hideSummaryClassTable,
-	} from "../../stores/sidebarStore";
-	/* Put stuff here */
-	export let classes;
-	export let nodes;
-	export let clickClassName;
-	export let tweenRows = false;
-	$: {
-		console.log("class-table", classes, nodes);
-	}
+	import { imagesToHighlight } from "../../stores/sidebarStore";
+
+	export let classes = [];
+	export let nodes = [];
 
 	let localAccuracy = 0.0;
 	let globalCoverage = 0.0;
@@ -97,6 +87,8 @@
 			let trueClassCounts = classesMap.get(true_class);
 			let predictedClassCounts = classesMap.get(predicted_class);
 			if (predictedClassCounts === undefined) {
+				console.log(classesMap);
+				console.log(predictedClassCounts);
 				console.log(predicted_class);
 				console.log(instance);
 				throw Error();
@@ -330,8 +322,8 @@
 		</div>
 	</Label>
 </div>
-{#if tableData}
-	<div id="table-legend">
+<div id="table-legend">
+	{#if tableData}
 		<table>
 			<tr>
 				{#each tableLegend as nameObj, index}
@@ -358,8 +350,10 @@
 				{/each}
 			</tr>
 		</table>
-	</div>
-	<div id="container">
+	{/if}
+</div>
+<div id="container">
+	{#if tableData}
 		<table>
 			{#each sortedClasses as className}
 				<tr>
@@ -405,10 +399,10 @@
 								(node) => node.instance_index
 							);
 
-							highlightImages({ instancesToHighlight });
+							imagesToHighlight.set(instancesToHighlight);
 						}}
 						on:mouseleave={() => {
-							resetOpacity();
+							imagesToHighlight.set([]);
 						}}
 					>
 						<Bar
@@ -428,10 +422,10 @@
 								.classNameWasTheTrueAndPredClass.map(
 									(node) => node.instance_index
 								);
-							highlightImages({ instancesToHighlight });
+							imagesToHighlight.set(instancesToHighlight);
 						}}
 						on:mouseleave={() => {
-							resetOpacity();
+							imagesToHighlight.set([]);
 						}}
 					>
 						<Rate
@@ -449,10 +443,10 @@
 								.classNameWasTheTrueClassAndWrong.map(
 									(node) => node.instance_index
 								);
-							highlightImages({ instancesToHighlight });
+							imagesToHighlight.set(instancesToHighlight);
 						}}
 						on:mouseleave={() => {
-							resetOpacity();
+							imagesToHighlight.set([]);
 						}}
 					>
 						<Rate
@@ -470,10 +464,10 @@
 								.classNameWasThePredClassAndWrong.map(
 									(node) => node.instance_index
 								);
-							highlightImages({ instancesToHighlight });
+							imagesToHighlight.set(instancesToHighlight);
 						}}
 						on:mouseleave={() => {
-							resetOpacity();
+							imagesToHighlight.set([]);
 						}}
 					>
 						<Rate
@@ -486,8 +480,8 @@
 				</tr>
 			{/each}
 		</table>
-	</div>
-{/if}
+	{/if}
+</div>
 
 <style>
 	:root {
@@ -515,7 +509,7 @@
 	#container {
 		overflow-y: overlay;
 		overflow-x: hidden;
-		height: 200px;
+		height: 125px;
 		font-size: 10px;
 		border-bottom: var(--table-border);
 	}

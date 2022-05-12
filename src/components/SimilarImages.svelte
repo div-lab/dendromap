@@ -1,16 +1,14 @@
 <script>
 	import {
-		hidePredictions,
 		showMisclassifications,
+		hasPredictedClass,
+		hasTrueClass,
+		hasSimilar,
+		imagesToHighlight,
 	} from "../stores/sidebarStore";
-	import {
-		globalLeafNodesObject,
-		incorrectColor,
-	} from "../stores/globalDataStore";
+	import { globalLeafNodesObject } from "../stores/globalDataStore";
 	import { imagesEndpoint } from "../stores/endPoints";
 	import Label from "./sidebarComponents/Label.svelte";
-	import { highlightImages, resetOpacity } from "./treemap/highlightImages";
-	import * as d3 from "d3";
 
 	export let image;
 	export let imageWidth = 50;
@@ -18,11 +16,14 @@
 	export let selectedImageHeight = 150;
 	export let selectedImageWidth = 150;
 	export let showSimilarImages = true;
+	export let incorrectColor = "red";
+
 	const labelWidth = 150;
 	let imageHover = null;
 
 	$: notHovering = imageHover === null;
 	$: currImage = notHovering ? image : imageHover;
+	$: console.log(currImage);
 
 	function imageIsEmpty() {
 		return image === null || image === undefined;
@@ -43,14 +44,16 @@
 					>
 						{handleNull(currImage?.instance_index)}
 					</Label>
-					<Label
-						label="True Class"
-						outerDivStyle="width: {labelWidth}px; "
-					>
-						{handleNull(currImage?.true_class)}
-					</Label>
+					{#if $hasTrueClass}
+						<Label
+							label="True Class"
+							outerDivStyle="width: {labelWidth}px; "
+						>
+							{handleNull(currImage?.true_class)}
+						</Label>
+					{/if}
 				</div>
-				{#if !$hidePredictions}
+				{#if $hasPredictedClass}
 					<div class="row" style="justify-content: end;">
 						<Label
 							label="Predicted Class"
@@ -81,12 +84,12 @@
 		</div>
 	</div>
 
-	{#if showSimilarImages}
-		<Label label="Similar Images" outerDivStyle=" margin-top: 5px;">
+	{#if showSimilarImages && $hasSimilar}
+		<Label label="Similar Images" outerDivStyle="margin-top: -10px;">
 			<div id="big-image-info">
 				<div id="container">
 					{#if image}
-						{#each image.topk_instance_index_list as simInstanceId}
+						{#each image.similar as simInstanceId}
 							<img
 								src={!imageIsEmpty()
 									? `${$imagesEndpoint}/${
@@ -108,14 +111,11 @@
 										$globalLeafNodesObject.idMap.get(
 											simInstanceId
 										);
-									highlightImages({
-										imageGroup: d3.selectAll("image"),
-										instancesToHighlight: [simInstanceId],
-									});
+									imagesToHighlight.set([simInstanceId]);
 								}}
 								on:mouseleave={() => {
+									imagesToHighlight.set([]);
 									imageHover = null;
-									resetOpacity();
 								}}
 							/>
 						{/each}
@@ -131,7 +131,7 @@
 		/* padding: 5px; */
 	}
 	#container {
-		height: 100px;
+		height: 75px;
 		overflow-y: overlay;
 		display: flex;
 		flex-flow: row;
@@ -141,6 +141,7 @@
 	}
 	#selected-image {
 		display: flex;
+		justify-content: center;
 	}
 	#big-image {
 		display: flex;
@@ -172,12 +173,7 @@
 		margin-bottom: 20px;
 		text-overflow: ellipsis;
 	}
-	.row > * {
-		/* margin-left: 20px; */
-	}
 	#current-image-selection {
 		border: 1px solid lightgrey;
-	}
-	#image-desc {
 	}
 </style>

@@ -1,49 +1,64 @@
 <script>
 	import * as d3 from "d3";
-	import { onMount } from "svelte";
-	import { imagesEndpoint } from "../../stores/endPoints";
-	import {
-		selectedParent,
-		selectedImage,
-		showMisclassifications,
-		nodeHovering,
-		treemapImageSize,
-		treemapNumClusters,
-		highlightSimilarImages,
-		changingSizes,
-		hideLabelAccuracy,
-		hideLabelCoverage,
-		highlightIncorrectImages,
-		hideMisclassifiedImages,
-	} from "../../stores/sidebarStore";
-	import {
-		globalClasses,
-		globalRootNode,
-		correctColor,
-		incorrectColor,
-	} from "../../stores/globalDataStore";
-	import {
-		treemapColorGenerator,
-		toPercent,
-		classCountsLabel,
-		ID,
-		forEachSelection,
-	} from "./util";
+	import { onMount, createEventDispatcher } from "svelte";
+	import { treemapColorGenerator, ID, forEachSelection } from "./util";
 	import { highlightImages, resetOpacity } from "./highlightImages";
-	import { kClustersTreeMap } from "./treemapper";
+	import { kClustersTreeMap, sortingKClustersTreeMap } from "./treemapper";
+
+	const dispatch = createEventDispatcher();
+	const dispatchNames = {
+		image: {
+			click: "imageClick",
+			mouseEnter: "imageMouseEnter",
+			mouseLeave: "imageMouseLeave",
+		},
+		cluster: {
+			click: "clusterClick",
+			mouseEnter: "clusterMouseEnter",
+			mouseLeave: "clusterMouseLeave",
+		},
+		parent: {
+			click: "parentClick",
+			mouseEnter: "parentMouseEnter",
+			mouseLeave: "parentMouseLeave",
+		},
+	};
+
+	function exportDataUp(name, payload, element, event) {
+		const formatted = {
+			data: payload,
+			element,
+			event,
+		};
+		dispatch(name, formatted);
+	}
 
 	// global values used and renamed for this file
-	/** @type {HierarchyNode} */
-	$: data = $globalRootNode;
-	$: imageWidth = $treemapImageSize;
-	$: imageHeight = $treemapImageSize;
-	$: numClusters = $treemapNumClusters;
+	// $: imageWidth = $treemapImageSize;
+	// $: imageHeight = $treemapImageSize;
+	// $: numClusters = $treemapNumClusters;
 
 	/**
 	 *  These are for the jsdoc for better autocomplete for when doing type comments
-	 * @typedef {{isLeaf: boolean, x0: number, y0: number, x1: number, y1: number}} AdditionalProperties
+	 * @typedef {{localLeaf: boolean, x0: number, y0: number, x1: number, y1: number}} AdditionalProperties
 	 * @typedef {(d3.HierarchyNode | AdditionalProperties} HierarchyNode
 	 */
+
+	/** @type {HierarchyNode} */
+	export let dendrogramData = {};
+	export let imageHeight;
+	export let imageWidth;
+	export let numClustersShowing = 8;
+	export let clusterLabelCallback = (d) => {
+		const totalLabel = `${d.data.node_count} image${
+			d.data.node_count > 1 ? "s" : ""
+		}`;
+		return totalLabel;
+	};
+	export let imageTitleCallback = (d) =>
+		`Click to select image ${d.instance_index}`;
+	export let clusterColorInterpolateCallback = d3.interpolateGreys;
+	export let currentParentCluster = null; // bind
 
 	// style and dimensions
 	export let width = 1600;
@@ -55,6 +70,44 @@
 	export let highlightedOpacity = 1.0;
 	export let hiddenOpacity = 0.25;
 	export let topLabelSpace = 20;
+	export let imageFilepath;
+	export let imagesToFocus = [];
+	export let labelColorCallback = (d) => (d.height < 5 ? "white" : "black");
+	export let labelSizeCallback = (d) => "10px";
+	export let outlineMisclassified = undefined;
+	export let focusMisclassified = undefined;
+	export let misclassificationColor = "red";
+	export let outlineStrokeWidth = "2px";
+
+	/** @type {"breadth" | "min_merging_distance" | "max_node_count" | "custom_sort"} */
+	export let renderingMethod = "breadth";
+	export let customSort = () => {
+		throw new Error(
+			"specify your own sorting function here if you picked random for renderingMethod"
+		);
+	};
+
+	const kClustersTreemapCustomSort = (obj, sort) => {
+		obj.sortOrder = sort;
+		return sortingKClustersTreeMap(obj);
+	};
+	const kClustersMaxCount = (obj) =>
+		kClustersTreemapCustomSort(obj, (a, b) => a.node_count - b.node_count);
+	const kClustersMinMerging = (obj) =>
+		kClustersTreemapCustomSort(
+			obj,
+			(a, b) => b.merging_distance - a.merging_distance
+		);
+	const kClustersUserSpecified = (obj) =>
+		kClustersTreemapCustomSort(obj, customSort);
+
+	$: renderingOptions = {
+		breadth: kClustersTreeMap,
+		min_merging_distance: kClustersMinMerging,
+		max_node_count: kClustersMaxCount,
+		custom_sort: kClustersUserSpecified,
+	};
+	$: currentRenderingMethod = renderingOptions[renderingMethod];
 
 	/**@type {d3.Selection}*/
 	let group;
@@ -69,7 +122,7 @@
 	let y = d3.scaleLinear().rangeRound([0, height]);
 	let ogRootCount = 0;
 	function init() {
-		ogRootCount = data.data.node_count;
+		ogRootCount = dendrogramData.data.node_count;
 		// create the svg that we will work with
 		svg = d3.select(svelteSvg);
 		svg.attr("style", svgStyle).attr("width", width).attr("height", height);
@@ -77,14 +130,18 @@
 		y.domain([0, height]);
 
 		// pick a color for the rectangles as they descend deeper
-		color = treemapColorGenerator(d3.interpolateGreys, data.height, {
-			offset: 1,
-			reverseColorDirection: false,
-		});
+		color = treemapColorGenerator(
+			clusterColorInterpolateCallback,
+			dendrogramData.height,
+			{
+				offset: 1,
+				reverseColorDirection: false,
+			}
+		);
 
 		// render the treemap
-		group = svg.append("g").call(render, data);
-		selectedParent.set(data); // pass to sidebar
+		group = svg.append("g").call(render, dendrogramData);
+		currentParentCluster = dendrogramData;
 	}
 	onMount(() => {
 		init();
@@ -151,7 +208,7 @@
 			.duration(transitionSpeed)
 			.call((t) => group1.transition(t).call(position, to));
 
-		selectedParent.set(to); // pass to sidebar
+		currentParentCluster = to;
 	}
 
 	/**
@@ -200,7 +257,7 @@
 					.call(position, to)
 			); // transition in the new group
 
-		selectedParent.set(to); // pass to sidebar
+		currentParentCluster = to;
 	}
 
 	/**
@@ -321,50 +378,26 @@
 			.data(imageGrid)
 			.join("image")
 			.attr("id", (d) => `image-${d.instance_index}`)
-			.attr("class", (d) => (d.correct ? "right" : "wrong"))
+			.attr("class", (d) =>
+				"correct" in d ? (d.correct ? "right" : "wrong") : ""
+			)
 			.attr("x", (d) => d.imagePosition.x)
 			.attr("y", (d) => d.imagePosition.y + topLabelSpace)
 			.attr("width", imageWidth)
 			.attr("height", imageHeight)
-			.attr("href", (d) => `${$imagesEndpoint}/${d.filename}`)
+			.attr("href", (d) => `${imageFilepath}/${d.filename}`)
 			.attr("cursor", "pointer")
 			.on("click", function (event, d) {
-				selectedImage.set(d); //pass to sidebar
+				exportDataUp(dispatchNames.image.click, d, this, event);
 			})
 			.attr("clip-path", d.clip)
 			.on("mouseenter", function (event, d) {
-				if ($highlightSimilarImages) {
-					highlightImages({
-						imageGroup: svg.selectAll("image"),
-						instancesToHighlight: d.topk_instance_index_list,
-						hiddenOpacity,
-						highlightedOpacity,
-					});
-					d3.select(this).attr("opacity", highlightedOpacity);
-				}
+				exportDataUp(dispatchNames.image.mouseEnter, d, this, event);
 			})
 			.on("mouseleave", function (event, d) {
-				if ($highlightSimilarImages) {
-					resetOpacity({ highlightedOpacity });
-					highlightWrong(
-						group,
-						$showMisclassifications,
-						$changingSizes,
-						{
-							borderWidth: "1px",
-							borderColor: incorrectColor,
-						},
-						$highlightIncorrectImages
-					);
-				}
+				exportDataUp(dispatchNames.image.mouseLeave, d, this, event);
 			});
-		groupRect
-			.selectAll("image")
-			.append("title")
-			.text(
-				(d) =>
-					`Click to select image ${d.instance_index}\nactual: ${d.true_class}, pred: ${d.predicted_class}`
-			);
+		groupRect.selectAll("image").append("title").text(imageTitleCallback);
 	};
 
 	/**
@@ -403,16 +436,16 @@
 	 * @param {d3.Selection} group
 	 * @param {HierarchyNode} root
 	 */
-	function render(group, root) {
+	function render(group, root, renderingFunc = currentRenderingMethod) {
 		// call the custom treemap function which returns the nodes to render in an array
 		/** @type {Node[]}*/
-		const nodesToRender = kClustersTreeMap({
+		const nodesToRender = renderingFunc({
 			parent: root,
 			x0: 0,
 			y0: 0,
 			x1: width,
 			y1: height,
-			kClusters: numClusters,
+			kClusters: numClustersShowing,
 			imageWidth,
 			imageHeight,
 		});
@@ -423,7 +456,7 @@
 			.data(nodesToRender)
 			.join("g")
 			.attr("id", (d) => `g-${d.data.node_index}`)
-			.attr("class", (d) => (d.isLeaf ? "leaf" : ""));
+			.attr("class", (d) => (d.localLeaf ? "leaf" : ""));
 
 		node.append("rect").call(renderTreemapRect, root);
 		// I don't want the text to extend past the rectangle, so clip it off
@@ -434,11 +467,7 @@
 			})
 			.append("use")
 			.attr("xlink:href", (d) => d.rect.href);
-		node.append("text").call(
-			renderLabel,
-			!$hideLabelAccuracy,
-			!$hideLabelCoverage
-		);
+		node.append("text").call(renderLabel);
 		// for each <g> that shows a cluster on top, render the images on top
 		const currentLeaves = group.selectAll(".leaf"); // local leaves basically
 		forEachSelection(currentLeaves, renderImages);
@@ -459,7 +488,7 @@
 		})
 			.attr("fill", colorByRemainingHeight) //appends rectColor to d
 			.attr("stroke", (d, i) => {
-				if (false && i === 0 && d !== data) {
+				if (false && i === 0 && d !== dendrogramData) {
 					d.strokeColor = d3.color("steelblue").brighter(0.2);
 				} else {
 					d.strokeColor = d.rectColor.darker(0.2);
@@ -469,6 +498,7 @@
 			.attr("stroke-width", 1.5)
 			.attr("class", "treemap-rect")
 			.on("click", function (event, child) {
+				exportDataUp(dispatchNames.cluster.click, child, this, event);
 				const clickedIsLeaf = child.data.leaf;
 				// leaves must not be clicked
 				if (!clickedIsLeaf) {
@@ -490,7 +520,7 @@
 								let nodeIds = [];
 								function _removeRenderedHierarchy(_parent) {
 									if (
-										_parent.isLeaf ||
+										_parent.localLeaf ||
 										_parent.children === undefined
 									)
 										return;
@@ -526,24 +556,34 @@
 				}
 			})
 			.on("mouseover", function (event, child) {
+				exportDataUp(
+					dispatchNames.cluster.mouseEnter,
+					child,
+					this,
+					event
+				);
 				if (child !== root && !child.data.leaf) {
 					d3.select(this).attr("stroke", "darkgrey");
 				}
-				nodeHovering.set(child);
 			})
 			.on("mouseout", function (event, child) {
+				exportDataUp(
+					dispatchNames.cluster.mouseLeave,
+					child,
+					this,
+					event
+				);
 				if (child !== root) {
 					d3.select(this)
 						.attr("stroke", child.strokeColor)
 						.attr("fill", child.rectColor);
 				}
-				nodeHovering.set(null); // this can be omitted
 			});
 		rect.append("title").text((d, i) => {
 			let clusterLabel = ``;
-			if (d === root && d !== data) {
+			if (d === root && d !== dendrogramData) {
 				clusterLabel = `Click to go back from cluster`;
-			} else if (d === data) {
+			} else if (d === dendrogramData) {
 			} else if (d.data.leaf) {
 				clusterLabel = `Only 1 image, can't go further`;
 			} else {
@@ -552,41 +592,14 @@
 			return clusterLabel;
 		});
 		rect.attr("cursor", (d) =>
-			d.data.leaf || d === data ? "default" : "pointer"
+			d.data.leaf || d === dendrogramData ? "default" : "pointer"
 		);
 	}
-	function renderLabel(text, showAccuracy, showCoverage) {
+	function renderLabel(text) {
 		text.attr("clip-path", (d) => d.clip)
-			.text((d) => {
-				let totalLabel = `${d.data.node_count} image${
-					d.data.node_count > 1 ? "s" : ""
-				}`;
-				if (showAccuracy) {
-					let accuracy = d.data.accuracy;
-					if (accuracy === undefined) {
-						const leafCorrect =
-							d.data.predicted_class === d.data.true_class;
-						accuracy = leafCorrect ? 1.0 : 0.0;
-					}
-					let accuracyLabel = `${toPercent(accuracy)} accuracy`;
-					totalLabel += `, ${accuracyLabel}`;
-				}
-				if (showCoverage) {
-					let incorrectCount =
-						d.data.node_count - d.data.correct_count;
-					let coverage = incorrectCount / ogRootCount;
-					if (coverage === undefined) {
-						const leafCorrect =
-							d.data.predicted_class === d.data.true_class;
-						coverage = leafCorrect ? 0.0 : 1.0 / ogRootCount;
-					}
-					let coverageLabel = `${toPercent(coverage)} coverage`;
-					totalLabel += `, ${coverageLabel}`;
-				}
-				return totalLabel;
-			})
-			.attr("fill", (d) => (d.height < 5 ? "white" : "black"))
-			.style("font-size", "10px")
+			.text(clusterLabelCallback)
+			.attr("fill", labelColorCallback)
+			.style("font-size", labelSizeCallback)
 			.attr("class", "label-text");
 	}
 
@@ -596,24 +609,11 @@
 		svg.selectAll("g").remove();
 		init();
 	}
-	// when the number of clusters is changed in the sidebar or image size, reset the treemap with those dimensions
-	$: {
-		if (svelteSvg && $changingSizes) {
-			// let svg = d3.select(svelteSvg);
-			// // resetWithNewSettings(svg, $treemapNumClusters, $treemapImageSize);
-			// make it so this is not called otherwise
-			if ($treemapNumClusters && $treemapImageSize) {
-				group.selectChildren("g").remove();
-				render(group, $selectedParent);
-			}
-		}
-	}
 	function highlightWrong(
 		group,
 		showMisclassifications,
-		changingSizes,
-		{ borderWidth = "1px", borderColor = incorrectColor },
-		focus
+		focus,
+		{ borderWidth = "1px", borderColor = "red" }
 	) {
 		function _showingStroke(d, color, width) {
 			d.style = `${width} solid ${color}`;
@@ -648,23 +648,48 @@
 					_showingStroke(d, "transparent", borderWidth)
 				);
 			}
-			group
-				.selectAll("text")
-				.call(renderLabel, !$hideLabelAccuracy, !$hideLabelCoverage);
+			group.selectAll("text").call(renderLabel);
 		}
 	}
+
+	function onSizeChanges(numClustersShowing, imageWidth, imageHeight) {
+		group.selectChildren("g").remove();
+		render(group, currentParentCluster);
+		highlightWrong(group, outlineMisclassified, focusMisclassified, {
+			borderWidth: outlineStrokeWidth,
+			borderColor: misclassificationColor,
+		});
+	}
 	$: {
-		if (!$hideMisclassifiedImages) {
-			highlightWrong(
-				group,
-				$showMisclassifications,
-				$changingSizes,
-				{
-					borderWidth: "1px",
-					borderColor: incorrectColor,
-				},
-				$highlightIncorrectImages
-			);
+		if (svelteSvg) {
+			onSizeChanges(numClustersShowing, imageWidth, imageHeight); // so cursed that this works
+		}
+	}
+
+	$: {
+		if (
+			outlineMisclassified !== undefined ||
+			focusMisclassified !== undefined
+		) {
+			highlightWrong(group, outlineMisclassified, focusMisclassified, {
+				borderWidth: outlineStrokeWidth,
+				borderColor: misclassificationColor,
+			});
+		}
+	}
+	let focusedHistory = false;
+	$: {
+		const toFocusNotEmpty = imagesToFocus.length > 0;
+		if (toFocusNotEmpty && svg) {
+			highlightImages({
+				imageGroup: svg.selectAll("image"),
+				instancesToHighlight: imagesToFocus,
+				hiddenOpacity,
+				highlightedOpacity,
+			});
+			focusedHistory = true;
+		} else if (!toFocusNotEmpty && focusedHistory && svg) {
+			resetOpacity({ highlightedOpacity });
 		}
 	}
 </script>
@@ -673,7 +698,6 @@
 
 <style>
 	svg {
-		/* border: 1px solid gray; */
 		overflow: hidden;
 	}
 </style>

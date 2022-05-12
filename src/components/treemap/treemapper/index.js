@@ -154,6 +154,7 @@ function paddingInnerDice(childA, childB, padding) {
  * @param {number} y0
  * @param {number} x1
  * @param {number} y1
+ * @param {{imageWidth: number, imageHeight: number, topPadding: number, innerPadding: number, outerPadding: number}}
  */
 export function binaryLayout(
 	parent,
@@ -161,7 +162,13 @@ export function binaryLayout(
 	y0,
 	x1,
 	y1,
-	{ imageWidth = 20, imageHeight = 20, topPadding = 10 } = {}
+	{
+		imageWidth = 20,
+		imageHeight = 20,
+		topPadding = 10,
+		innerPadding = 10,
+		outerPadding = 10,
+	} = {}
 ) {
 	const { value, children } = parent;
 
@@ -202,6 +209,7 @@ export function binaryLayout(
 		vertical: imageHeight / 2 + addedPadding,
 		horizontal: imageWidth / 2 + addedPadding,
 	};
+	const verticalSpace = topPadding + outerPadding;
 	if (shouldDice) {
 		// split horizontally
 		// need to assign the new layout for each child
@@ -241,9 +249,9 @@ export function binaryLayout(
 		childB.y0 = y0;
 		childB.y1 = y1;
 
-		paddingOuterDice(childA, childB, 10);
-		paddingInnerDice(childA, childB, 10);
-		paddingTopDice(childA, childB, 10);
+		paddingOuterDice(childA, childB, outerPadding);
+		paddingInnerDice(childA, childB, innerPadding);
+		paddingTopDice(childA, childB, topPadding);
 
 		const childAWidth = childA.x1 - childA.x0;
 		if (childAWidth < imageWidth) {
@@ -258,11 +266,11 @@ export function binaryLayout(
 			childA.x1 -= shiftBack;
 		}
 		const childBHeight = childB.y1 - childB.y0;
-		if (childBHeight < imageHeight + 20) {
+		if (childBHeight < imageHeight + verticalSpace) {
 			// change the childB to take up its entire parent space
-			paddingOuterDice(childA, childB, -10);
-			paddingInnerDice(childA, childB, -10);
-			paddingTopDice(childA, childB, -10);
+			paddingOuterDice(childA, childB, -outerPadding);
+			paddingInnerDice(childA, childB, -innerPadding);
+			paddingTopDice(childA, childB, -topPadding);
 		}
 		// diceHorizontalPadding(childA, childB, padding.horizontal);
 		// diceVerticalPadding(childA, childB, padding.vertical);
@@ -289,9 +297,9 @@ export function binaryLayout(
 		// impossible to top how bad this is
 		const couldntFitAllInB = imagesFitB < parent.imagesFit.vertical;
 		const boxHeightB = couldntFitAllInB
-			? height - boxHeightA + 20
+			? height - boxHeightA + verticalSpace
 			: imagesFitB * imageHeight;
-		if (couldntFitAllInB) boxHeightA -= 20;
+		if (couldntFitAllInB) boxHeightA -= verticalSpace;
 		// console.log(`slice ${parent.data.node_index}`, imagesFitA, imagesFitB);
 
 		// xs stay the same
@@ -306,29 +314,29 @@ export function binaryLayout(
 		childB.y0 = childA.y1;
 		childB.y1 = childB.y0 + boxHeightB;
 
-		paddingOuterSlice(childA, childB, 10);
-		paddingInnerSlice(childA, childB, 10);
-		paddingTopSlice(childA, childB, 10);
+		paddingOuterSlice(childA, childB, outerPadding);
+		paddingInnerSlice(childA, childB, innerPadding);
+		paddingTopSlice(childA, childB, topPadding);
 		const childAHeight = childA.y1 - childA.y0;
-		if (childAHeight < imageHeight + 20) {
+		if (childAHeight < imageHeight + verticalSpace) {
 			// change the childB to take up its entire parent space
-			const shiftBack = imageHeight + 20 - childAHeight;
+			const shiftBack = imageHeight + verticalSpace - childAHeight;
 			childB.y0 += shiftBack;
 			childA.y1 += shiftBack;
 		}
 		const childBHeight = childB.y1 - childB.y0;
-		if (childBHeight < imageHeight + 20) {
+		if (childBHeight < imageHeight + verticalSpace) {
 			// change the childB to take up its entire parent space
-			const shiftBack = imageHeight + 20 - childBHeight;
+			const shiftBack = imageHeight + verticalSpace - childBHeight;
 			childB.y0 -= shiftBack;
 			childA.y1 -= shiftBack;
 		}
 
 		const childBWidth = childB.x1 - childB.x0;
 		if (childBWidth < imageWidth) {
-			paddingOuterSlice(childA, childB, -10);
-			paddingInnerSlice(childA, childB, -10);
-			paddingTopSlice(childA, childB, -10);
+			paddingOuterSlice(childA, childB, -outerPadding);
+			paddingInnerSlice(childA, childB, -innerPadding);
+			paddingTopSlice(childA, childB, -topPadding);
 		}
 		// sliceHorizontalPadding(childA, childB, padding.horizontal);
 		// sliceVerticalPadding(childA, childB, padding.vertical);
@@ -339,6 +347,28 @@ export function binaryLayout(
 	// // top additional padding
 	// verticalShift(childA, topPadding);
 	// verticalShift(childB, topPadding);
+}
+const hasNegativeDims = (node, xMin = 0, yMin = 0) =>
+	node.x1 - node.x0 < xMin || node.y1 - node.y0 < yMin;
+
+function canFitChildrenFunc({
+	imageWidth,
+	imageHeight,
+	innerPadding,
+	outerPadding,
+	topPadding,
+}) {
+	const canFitVertical =
+		2 * imageHeight + 3 * topPadding + 2 * outerPadding + innerPadding;
+	const canFitHorizontal = 2 * imageWidth + innerPadding + 2 * outerPadding;
+	const _canFitFunc = (currParent) => {
+		return hasNegativeDims(currParent, canFitHorizontal, canFitVertical);
+	};
+	return _canFitFunc;
+}
+
+function isGlobalLeaf(node) {
+	return node.children === undefined || node.children.length === 0;
 }
 
 /**
@@ -357,6 +387,9 @@ export function kClustersTreeMap(
 		kClusters = Infinity,
 		imageWidth = 20,
 		imageHeight = 20,
+		innerPadding = 10,
+		outerPadding = 10,
+		topPadding = 10,
 	} = {},
 	layoutCallback = binaryLayout
 ) {
@@ -373,31 +406,24 @@ export function kClustersTreeMap(
 	queue.push(parent);
 	let clustersShowing = 1;
 	let toRender = [parent];
+	const canFitChildren = canFitChildrenFunc({
+		imageHeight,
+		imageWidth,
+		innerPadding,
+		outerPadding,
+		topPadding,
+	});
 
 	// while the queue is not empty and still need to place more items
 	breadthFirst: while (!queue.isEmpty() && clustersShowing < kClusters) {
 		// pop queue as the current parent
 		let currParent = queue.pop();
-		currParent.isLeaf = false;
 
-		const isLeaf =
-			currParent.children === undefined ||
-			currParent.children.length === 0;
-		if (isLeaf) {
-			currParent.isLeaf = true;
+		currParent.localLeaf = false;
+		if (isGlobalLeaf(currParent) || canFitChildren(currParent)) {
+			currParent.localLeaf = true;
 			continue breadthFirst;
 		} // check if we have a leaf node and can't go any further on this side
-
-		// add the children to the queue
-		childIter: for (let i = 0; i < currParent.children.length; i++) {
-			if (clustersShowing > kClusters) break childIter; // if we already placed enough clusters, break out
-
-			// to iterate these next add them to the queue
-			const child = currParent.children[i];
-			toRender.push(child);
-			queue.push(child);
-			child.isLeaf = true;
-		}
 
 		// layout the boxes given the current parents children
 		layoutCallback(
@@ -406,9 +432,94 @@ export function kClustersTreeMap(
 			currParent.y0,
 			currParent.x1,
 			currParent.y1,
-			{ imageHeight, imageWidth }
+			{ imageHeight, imageWidth, innerPadding, topPadding, outerPadding }
 		);
 		clustersShowing++;
+
+		// add the children to the queue
+		childIter: for (let i = 0; i < currParent.children.length; i++) {
+			if (clustersShowing > kClusters) break childIter; // if we already placed enough clusters, break out
+
+			// to iterate these next add them to the queue
+			const child = currParent.children[i];
+			queue.push(child);
+			toRender.push(child);
+			child.localLeaf = true;
+		}
+	}
+	return toRender;
+}
+
+/**
+ * lays out the given root node until a certain number are hit not left to right, but by merge distance (normal way to cut dendrogram up)
+ * @param {{parent: d3.HierarchyNode, x0: number, y0: number, x1: number, y1: number, kClusters?: number
+ * paddingTop?: number, layoutCallback: (node: d3.HierarchyNode, x0: number, y0: number, x1: number, y1: number) => void, sortOrder: (a, b) => number, init: (root: d3.HierarchyNode) => void}} treemapParams
+ */
+export function sortingKClustersTreeMap({
+	parent,
+	x0,
+	y0,
+	x1,
+	y1,
+	kClusters = Infinity,
+	imageWidth = 20,
+	imageHeight = 20,
+	innerPadding = 10,
+	outerPadding = 10,
+	topPadding = 10,
+	layoutCallback = binaryLayout,
+	sortOrder = (a, b) => b.merging_distance - a.merging_distance,
+} = {}) {
+	// set the parent width and height
+	parent.x0 = x0;
+	parent.y0 = y0;
+	parent.x1 = x1;
+	parent.y1 = y1;
+
+	// create queue
+
+	// add the root node to start
+	let clustersShowing = 1;
+	let toRender = [parent];
+	let traversalOrder = [parent];
+	const canFitChildren = canFitChildrenFunc({
+		imageHeight,
+		imageWidth,
+		innerPadding,
+		outerPadding,
+		topPadding,
+	});
+
+	layouter: while (traversalOrder.length > 0 && clustersShowing < kClusters) {
+		traversalOrder = traversalOrder.sort((a, b) =>
+			sortOrder(a.data, b.data)
+		);
+		const currParent = traversalOrder.pop();
+		currParent.localLeaf = false;
+		if (isGlobalLeaf(currParent) || canFitChildren(currParent)) {
+			currParent.localLeaf = true;
+			continue layouter;
+		}
+
+		layoutCallback(
+			currParent,
+			currParent.x0,
+			currParent.y0,
+			currParent.x1,
+			currParent.y1,
+			{ imageHeight, imageWidth, innerPadding, topPadding, outerPadding }
+		);
+		clustersShowing++;
+
+		const children = currParent.children;
+		childIter: for (let i = 0; i < children.length; i++) {
+			if (clustersShowing > kClusters) break childIter;
+			const child = children[i];
+
+			traversalOrder.push(child);
+			child.localLeaf = true;
+			toRender.push(child);
+		}
 	}
 	return toRender;
 }

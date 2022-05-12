@@ -16,8 +16,8 @@
 		{ value: "chips", label: "Chips" },
 		{ value: "ice-cream", label: "Ice Cream" },
 	];
-	export let initialValue = null;
-	let value = initialValue;
+	export let initialValue;
+	export let value = initialValue;
 
 	function handleSelect(event) {
 		dispatch("select", event.detail);
@@ -42,7 +42,7 @@
 		{isClearable}
 		{placeholder}
 		{items}
-		{value}
+		bind:value
 		showChevron
 	/>
 </div>
