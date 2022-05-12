@@ -144,6 +144,7 @@
 	}
 	#selected-image {
 		display: flex;
+		justify-content: center;
 	}
 	#big-image {
 		display: flex;

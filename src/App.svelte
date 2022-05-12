@@ -331,7 +331,7 @@
 	}
 	#main {
 		display: flex;
-		height: 835px;
+		height: 850px;
 		border-bottom: 1.5px solid #00000010;
 	}
 	#sidebar {
