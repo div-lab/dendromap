@@ -1,5 +1,5 @@
 <script>
-	import * as d3 from "d3-hierarchy";
+	import { hierarchy } from "d3";
 	import {
 		assignImageClusterToEachNode,
 		givenInstanceIdGetLeafNodeMap as IdToLeafNodeMap,
@@ -53,7 +53,7 @@
 			node.value = 1;
 			node.correct = node.correct_count === 1;
 		});
-		let hierarchicalData = d3.hierarchy(tree).sum((d) => d.value);
+		let hierarchicalData = hierarchy(tree).sum((d) => d.value);
 		let leafNodes = hierarchicalData.leaves().map((leaf) => leaf.data);
 		let leafIdMap = IdToLeafNodeMap(leafNodes);
 		assignImageClusterToEachNode(hierarchicalData); // creates a cluster property on each node in the tree
@@ -139,8 +139,6 @@
 	let dataCache = null;
 	let currentParentCluster = null;
 
-	const toggleSidebarArticle = () => (articleOpen = !articleOpen);
-
 	// indicators of when things are done or if we have a certain item
 	let changedDataset = false;
 	let articleOpen = true;
@@ -156,7 +154,6 @@
 	// app variables for data
 	let dendrogramData;
 	let treeClasses;
-	let valueSet, valueInterface, valueTask;
 
 	// on change of the dataset update the dataset
 	$: {
