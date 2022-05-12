@@ -23,6 +23,7 @@
 
 	$: notHovering = imageHover === null;
 	$: currImage = notHovering ? image : imageHover;
+	$: console.log(currImage);
 
 	function imageIsEmpty() {
 		return image === null || image === undefined;

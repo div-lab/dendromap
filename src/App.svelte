@@ -9,7 +9,6 @@
 	import {
 		globalClasses,
 		globalLeafNodesObject,
-		globalRootNode,
 	} from "./stores/globalDataStore";
 	import {
 		treemapNumClusters,
@@ -37,7 +36,6 @@
 	function storeDataGlobally({ classes, leafNodes, leafIdMap, rootNode }) {
 		globalLeafNodesObject.set({ idMap: leafIdMap, array: leafNodes });
 		globalClasses.set(classes);
-		globalRootNode.set(rootNode);
 	}
 
 	function processData(tree) {
