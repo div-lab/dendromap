@@ -520,7 +520,7 @@
 	#container {
 		overflow-y: overlay;
 		overflow-x: hidden;
-		height: 150px;
+		height: 125px;
 		font-size: 10px;
 		border-bottom: var(--table-border);
 	}

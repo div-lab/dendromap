@@ -88,7 +88,7 @@
 	</div>
 
 	{#if showSimilarImages && $hasSimilar}
-		<Label label="Similar Images" outerDivStyle=" margin-top: 5px;">
+		<Label label="Similar Images" outerDivStyle="margin-top: -10px;">
 			<div id="big-image-info">
 				<div id="container">
 					{#if image}
@@ -134,7 +134,7 @@
 		/* padding: 5px; */
 	}
 	#container {
-		height: 100px;
+		height: 75px;
 		overflow-y: overlay;
 		display: flex;
 		flex-flow: row;

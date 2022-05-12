@@ -338,7 +338,7 @@
 		<div class="hor-line" />
 		<div class="sidebar-item">
 			<div class="parent-info">
-				<BigLabel label="Class Table">
+				<BigLabel label="Class Table" textStyle="margin-bottom: -2px;">
 					<div>
 						{#if $selectedParent !== null && !changedDataset}
 							<ClassTable
@@ -356,7 +356,7 @@
 
 	<div class="hor-line" />
 	<div class="sidebar-item">
-		<BigLabel label="Image Details">
+		<BigLabel label="Image Details" textStyle="margin-bottom: -2px;">
 			<div class="image-info">
 				<SimilarImages image={$selectedImage} showSimilarImages />
 			</div>

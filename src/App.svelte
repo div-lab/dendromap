@@ -152,7 +152,7 @@
 
 	// indicators of when things are done or if we have a certain item
 	let changedDataset = false;
-	let articleOpen = false;
+	let articleOpen = true;
 	let showTreemap = false;
 	let classClusteringsPresent;
 
@@ -239,8 +239,8 @@
 					imageFilepath={selectedOption.image_filepath}
 					imageWidth={$treemapImageSize}
 					imageHeight={$treemapImageSize}
-					width={Math.max(screen.width - 600, 800)}
-					height={$totalHeight}
+					width={Math.max(screen.width - 600, 600)}
+					height={835}
 					numClustersShowing={$treemapNumClusters}
 					imagesToFocus={$imagesToHighlight}
 					outlineMisclassified={$showMisclassifications}
@@ -331,7 +331,7 @@
 	}
 	#main {
 		display: flex;
-		height: 925px;
+		height: 835px;
 		border-bottom: 1.5px solid #00000010;
 	}
 	#sidebar {

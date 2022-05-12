@@ -12,7 +12,7 @@
 <style>
 	.text-label {
 		font-weight: 600;
-		font-size: 18px;
+		font-size: 17px;
 		color: var(--clear-grey);
 	}
 	.item-container {
