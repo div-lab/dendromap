@@ -1,25 +1,14 @@
 <script>
 	import { onMount } from "svelte";
-	import { flip } from "svelte/animate";
 	import Bar from "./Bar.svelte";
 	import { highlightImages, resetOpacity } from "../treemap/highlightImages";
 	import Label from "../sidebarComponents/Label.svelte";
 	import Rate from "./Rate.svelte";
-	import BigRate from "./BigRate.svelte";
 	import Switch from "../sidebarComponents/Switch.svelte";
-	import {
-		showMisclassifications,
-		hideSummaryClassTable,
-		imagesToHighlight,
-	} from "../../stores/sidebarStore";
-	/* Put stuff here */
+	import { imagesToHighlight } from "../../stores/sidebarStore";
+
 	export let classes = [];
 	export let nodes = [];
-	export let clickClassName;
-	export let tweenRows = false;
-	// $: {
-	// 	console.log("class-table", classes, nodes);
-	// }
 
 	let localAccuracy = 0.0;
 	let globalCoverage = 0.0;

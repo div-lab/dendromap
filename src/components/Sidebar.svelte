@@ -2,34 +2,18 @@
 	import { createEventDispatcher } from "svelte";
 	import {
 		selectedParent,
-		nodeHovering,
 		selectedImage,
 		showMisclassifications,
-		showAsGrid,
 		treemapImageSize,
 		treemapNumClusters,
 		highlightSimilarImages,
-		zoomedOutGridDimensions,
-		zoomedInGridDimensions,
-		currentNodesShowing,
 		currentClassFilter,
-		changingSizes,
-		maxGrids,
-		isZoomedIn,
-		hideClassTable,
-		hideSimilarMode,
-		hideClassFilter,
-		hideMisclassifiedImages,
 		highlightIncorrectImages,
-		updateZoomDimensions,
-		hideGlobalDetails,
-		showUserStudyParameters,
 		hasClasses,
 		hasSimilar,
 		hasPredictedClass,
 		imagesToHighlight,
 	} from "../stores/sidebarStore";
-	import { imagesEndpoint } from "../stores/endPoints";
 	import Label from "./sidebarComponents/Label.svelte";
 	import ClassTable from "./classTable/ClassTable.svelte";
 	import SimilarImages from "./SimilarImages.svelte";
@@ -37,28 +21,20 @@
 	import BigLabel from "./sidebarComponents/BigLabel.svelte";
 	import Switch from "./sidebarComponents/Switch.svelte";
 	import Slider from "./sidebarComponents/Slider.svelte";
-	import HelpIcon from "./misc/HelpIcon.svelte";
 	import Name from "./article/Name.svelte";
 
 	const dispatch = createEventDispatcher();
 
-	export let classNames;
-	export let classes;
-	export let name = "Error Browser";
-	export let modelName;
-	export let selectedDataset;
+	export let classes; // array of strings containing the class names
 	export let animateClassTable = false;
 	export let articleSidebarOpen = false;
-	export let options;
-	export let selectedOption;
+	export let options; // options that show the dataset and endpoints
+	export let selectedOption; // current select option index
+	export let changedDataset = false; // some bs to get things to work
 
-	// optional if we are in the user study
-	export let task;
-	export let set;
-	export let _interface;
-	export let changedDataset = false;
+	let numClusters = 8; // starting num clusters
+	let imageSize = $treemapImageSize > 0 ? $treemapImageSize : 35;
 
-	$: cpyClasses = classes ? classes.map((className) => className) : [];
 	const copyClasses = () =>
 		classes ? classes.map((className) => className) : [];
 
@@ -67,37 +43,14 @@
 			className: className,
 		});
 	}
-	export let visualizationOptions = [];
-	export let classClusteringsPresent;
-	export let initialVisualizationChoice = "treemap";
-	let selectedVisualization = initialVisualizationChoice;
-
-	$: {
-		dispatch("selectVis", selectedVisualization);
-	}
-
-	// treemap settings
-	let numClusters = 8;
-	let imageSize = $treemapImageSize > 0 ? $treemapImageSize : 35;
-
 	async function updateSetting(imageSize, numClusters) {
-		await changingSizes.set(true);
 		await treemapImageSize.set(imageSize);
 		await treemapNumClusters.set(numClusters);
-		await changingSizes.set(false);
 	}
+
+	$: cpyClasses = classes ? classes.map((className) => className) : [];
 	$: {
 		updateSetting(imageSize, numClusters);
-	}
-	// baseline settings
-	let zoomedOutDims = $zoomedOutGridDimensions
-		? $zoomedOutGridDimensions
-		: 40;
-	updateZoomDimensions(zoomedOutDims);
-	$: {
-		if (classClusteringsPresent) {
-			zoomedOutDims = $zoomedOutGridDimensions;
-		}
 	}
 </script>
 
@@ -140,37 +93,32 @@
 	<div class="sidebar-item" id="visualization-settings">
 		<BigLabel label="Settings">
 			<div class="row">
-				{#if !$hideClassFilter}
-					{#if $hasClasses}
-						<Label
-							outerDivStyle="width: 120px;"
-							label="Class Filter"
-						>
-							<SearchableSelect
-								on:select={(e) => {
-									const selectedClass = e.detail.value;
-									currentClassFilter.set(selectedClass);
-									selectedImage.set(null);
-									dispatch("filterClass", selectedClass);
-								}}
-								on:clear={() => {
-									currentClassFilter.set(null);
-									selectedImage.set(null);
-									dispatch("filterClass", null);
-								}}
-								style=""
-								bind:value={$currentClassFilter}
-								placeholder="Filter..."
-								items={cpyClasses ? cpyClasses : []}
-								initialValue={$currentClassFilter}
-								isClearable
-								onlyValuesNoLabels
-							/>
-						</Label>
-					{/if}
+				{#if $hasClasses}
+					<Label outerDivStyle="width: 120px;" label="Class Filter">
+						<SearchableSelect
+							on:select={(e) => {
+								const selectedClass = e.detail.value;
+								currentClassFilter.set(selectedClass);
+								selectedImage.set(null);
+								dispatch("filterClass", selectedClass);
+							}}
+							on:clear={() => {
+								currentClassFilter.set(null);
+								selectedImage.set(null);
+								dispatch("filterClass", null);
+							}}
+							style=""
+							bind:value={$currentClassFilter}
+							placeholder="Filter..."
+							items={cpyClasses ? cpyClasses : []}
+							initialValue={$currentClassFilter}
+							isClearable
+							onlyValuesNoLabels
+						/>
+					</Label>
 				{/if}
 				<Label
-					outerDivStyle="width: 150px; margin-left:{$hideClassFilter
+					outerDivStyle="width: 150px; margin-left:{!$hasClasses
 						? 0
 						: 25}px;"
 					label="Image Size"
@@ -205,7 +153,7 @@
 				</Label>
 			</div>
 			<div class="row">
-				{#if !$hideMisclassifiedImages && $hasPredictedClass}
+				{#if $hasPredictedClass}
 					<Label outerDivStyle="width: 200px;" label="Outline Images">
 						<div style="display: flex; align-items:center">
 							<Switch
@@ -244,7 +192,7 @@
 						</div>
 					</Label>
 				{/if}
-				{#if !$hideSimilarMode && $hasSimilar}
+				{#if $hasSimilar}
 					<Label outerDivStyle="width: 250px;" label="Similar Images">
 						<div style="display: flex; align-items:center">
 							<Switch
@@ -265,7 +213,7 @@
 			</div>
 		</BigLabel>
 	</div>
-	{#if !$hideClassTable && $hasClasses}
+	{#if $hasClasses}
 		<div class="hor-line" />
 		<div class="sidebar-item">
 			<div class="parent-info">
@@ -275,8 +223,6 @@
 							<ClassTable
 								nodes={$selectedParent.cluster}
 								classes={copyClasses()}
-								{clickClassName}
-								tweenRows={animateClassTable}
 							/>
 						{/if}
 					</div>
@@ -304,13 +250,6 @@
 		width: 100%;
 		height: 1px;
 	}
-	.spacer {
-		margin-top: 10px;
-		margin-bottom: 10px;
-	}
-	#classList li {
-		cursor: pointer;
-	}
 	#sidebar {
 		border-right: 1.5px solid var(--lighter-grey);
 		background-color: hsl(0, 0%, 98.5%);
@@ -322,20 +261,10 @@
 		padding-top: 10px;
 		padding-bottom: 10px;
 	}
-	#name {
-		font-size: 25px;
-		font-weight: 600;
-	}
 	.row {
 		display: flex;
 		margin-top: 5px;
 		flex-wrap: wrap;
-	}
-	.disabled {
-		color: lightgrey;
-	}
-	.on {
-		color: #0275ff;
 	}
 	select {
 		border: none;

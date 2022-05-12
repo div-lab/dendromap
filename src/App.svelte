@@ -5,7 +5,6 @@
 		givenInstanceIdGetLeafNodeMap as IdToLeafNodeMap,
 	} from "./util";
 	import { ScaleOut } from "svelte-loading-spinners";
-	import { onMount } from "svelte";
 	import { imagesEndpoint } from "./stores/endPoints";
 	import {
 		globalClasses,
@@ -13,7 +12,6 @@
 		globalRootNode,
 	} from "./stores/globalDataStore";
 	import {
-		totalHeight,
 		treemapNumClusters,
 		treemapImageSize,
 		hasClasses,
@@ -139,11 +137,6 @@
 		dataCache = null;
 	}
 
-	// default settings
-	let selectedVisualization = "treemap";
-	let selectedDataset = "cifar100";
-	let modelName = "resnet50";
-
 	let classedDataCache = {};
 	let dataCache = null;
 	let currentParentCluster = null;
@@ -200,37 +193,24 @@
 <div>
 	<div id="main">
 		<div id="sidebar">
-			{#if selectedVisualization}
-				<Sidebar
-					on:filterClass={async (e) => {
-						const className = e.detail;
-						showTreemap = await false;
-						if (className === null) {
-							await fetchData();
-						} else {
-							await fetchClassedData(className);
-						}
-						console.log(e.detail);
-						showTreemap = await true;
-					}}
-					classes={treeClasses}
-					{options}
-					bind:selectedOption={selectedOptionIndex}
-					classNames={[]}
-					on:selectVis={({ detail }) => {
-						selectedVisualization = detail;
-					}}
-					bind:articleSidebarOpen={articleOpen}
-					initialVisualizationChoice={selectedVisualization}
-					{modelName}
-					bind:selectedDataset
-					{classClusteringsPresent}
-					task={valueTask}
-					_interface={valueInterface}
-					set={valueSet}
-					{changedDataset}
-				/>
-			{/if}
+			<Sidebar
+				on:filterClass={async (e) => {
+					const className = e.detail;
+					showTreemap = await false;
+					if (className === null) {
+						await fetchData();
+					} else {
+						await fetchClassedData(className);
+					}
+					console.log(e.detail);
+					showTreemap = await true;
+				}}
+				classes={treeClasses}
+				{options}
+				bind:selectedOption={selectedOptionIndex}
+				bind:articleSidebarOpen={articleOpen}
+				{changedDataset}
+			/>
 		</div>
 		<div id="vis">
 			{#if showTreemap}
@@ -265,9 +245,6 @@
 							titleMsg += `\npred class: ${d.predicted_class}`;
 						}
 						return titleMsg;
-					}}
-					clusterTitleCallback={(d) => {
-						return "";
 					}}
 					bind:currentParentCluster
 					on:imageClick={(e) => {

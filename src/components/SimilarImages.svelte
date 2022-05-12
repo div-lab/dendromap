@@ -1,6 +1,5 @@
 <script>
 	import {
-		hidePredictions,
 		showMisclassifications,
 		hasPredictedClass,
 		hasTrueClass,
@@ -13,8 +12,6 @@
 	} from "../stores/globalDataStore";
 	import { imagesEndpoint } from "../stores/endPoints";
 	import Label from "./sidebarComponents/Label.svelte";
-	import { highlightImages, resetOpacity } from "./treemap/highlightImages";
-	import * as d3 from "d3";
 
 	export let image;
 	export let imageWidth = 50;
@@ -22,6 +19,7 @@
 	export let selectedImageHeight = 150;
 	export let selectedImageWidth = 150;
 	export let showSimilarImages = true;
+
 	const labelWidth = 150;
 	let imageHover = null;
 
@@ -56,7 +54,7 @@
 						</Label>
 					{/if}
 				</div>
-				{#if !$hidePredictions && $hasPredictedClass}
+				{#if $hasPredictedClass}
 					<div class="row" style="justify-content: end;">
 						<Label
 							label="Predicted Class"
@@ -176,12 +174,7 @@
 		margin-bottom: 20px;
 		text-overflow: ellipsis;
 	}
-	.row > * {
-		/* margin-left: 20px; */
-	}
 	#current-image-selection {
 		border: 1px solid lightgrey;
-	}
-	#image-desc {
 	}
 </style>
