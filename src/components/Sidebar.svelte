@@ -117,52 +117,23 @@
 				<b>Open Article</b>: What is <Name />?
 			</button>
 		</div>
-		{#if !$hideGlobalDetails}
-			<Label outerDivStyle="width: 150px;" label="Dataset">
-				<select
-					bind:value={selectedOption}
-					on:change={() => {
-						selectedImage.set(null);
-						currentClassFilter.set(null);
-						showMisclassifications.set(false);
-						highlightIncorrectImages.set(false);
-						highlightSimilarImages.set(false);
-						imagesToHighlight.set([]);
-					}}
-				>
-					{#each options as option, i}
-						<option value={i}
-							>{option.dataset} {option.model}</option
-						>
-					{/each}
-				</select>
-			</Label>
-			<!-- <Label outerDivStyle="width: 95px;" label="Model"
-				>{modelName === "resnet50" ? "ResNet50" : modelName}</Label
-			> -->
-		{:else}
-			<Label outerDivStyle="width: 100px;" label="Current Task"
-				>task {task}</Label
+		<Label outerDivStyle="width: 150px;" label="Dataset">
+			<select
+				bind:value={selectedOption}
+				on:change={() => {
+					selectedImage.set(null);
+					currentClassFilter.set(null);
+					showMisclassifications.set(false);
+					highlightIncorrectImages.set(false);
+					highlightSimilarImages.set(false);
+					imagesToHighlight.set([]);
+				}}
 			>
-			{#if $showUserStudyParameters}
-				<div style="margin-top: 5px; padding:0;">
-					{#if +task !== 7}
-						<a
-							href="/?interface={_interface}&set={set}&task={+task +
-								1}"
-						>
-							<button style="margin: 0;"
-								>Click to go to next Task {+task + 1}</button
-							>
-						</a>
-					{:else}
-						<button disabled style="margin: 0;"
-							>No more tasks</button
-						>
-					{/if}
-				</div>
-			{/if}
-		{/if}
+				{#each options as option, i}
+					<option value={i}>{option.dataset} {option.model}</option>
+				{/each}
+			</select>
+		</Label>
 	</div>
 	<div class="hor-line" />
 
@@ -198,70 +169,40 @@
 						</Label>
 					{/if}
 				{/if}
-				{#if selectedVisualization === "treemap"}
-					<Label
-						outerDivStyle="width: 150px; margin-left:{$hideClassFilter
-							? 0
-							: 25}px;"
-						label="Image Size"
-					>
-						<Slider
-							width={150}
-							height={40}
-							bind:value={imageSize}
-							min={15}
-							max={50}
-							step={1}
-							valueFormatCallback={(value) => `${value}px`}
-							defaultTextColor={"lightgrey"}
-							inputTextColor={"hsl(0, 0%, 12%)"}
-						/>
-					</Label>
-					<Label
-						outerDivStyle="width: 150px; margin-left:25px;"
-						label="Clusters Visible"
-					>
-						<Slider
-							width={150}
-							height={40}
-							bind:value={numClusters}
-							min={2}
-							max={20}
-							step={1}
-							valueFormatCallback={(value) => `${value}`}
-							defaultTextColor={"lightgrey"}
-							inputTextColor={"hsl(0, 0%, 12%)"}
-						/>
-					</Label>
-				{:else if selectedVisualization === "grid"}
-					<Label
-						outerDivStyle="width: 300px; margin-left:10px;"
-						label="Grid Size"
-					>
-						<div style="display: flex;">
-							<div>
-								<Slider
-									width={150}
-									height={40}
-									bind:value={zoomedOutDims}
-									min={1}
-									max={$maxGrids}
-									step={1}
-									valueFormatCallback={(value) =>
-										`${value} by ${value}`}
-									defaultTextColor={"lightgrey"}
-									inputTextColor={"hsl(0, 0%, 12%)"}
-								/>
-							</div>
-							<button
-								style="margin-left: 20px;"
-								on:click={() => {
-									updateZoomDimensions(zoomedOutDims);
-								}}>recompute grid</button
-							>
-						</div>
-					</Label>
-				{/if}
+				<Label
+					outerDivStyle="width: 150px; margin-left:{$hideClassFilter
+						? 0
+						: 25}px;"
+					label="Image Size"
+				>
+					<Slider
+						width={150}
+						height={40}
+						bind:value={imageSize}
+						min={15}
+						max={50}
+						step={1}
+						valueFormatCallback={(value) => `${value}px`}
+						defaultTextColor={"lightgrey"}
+						inputTextColor={"hsl(0, 0%, 12%)"}
+					/>
+				</Label>
+				<Label
+					outerDivStyle="width: 150px; margin-left:25px;"
+					label="Clusters Visible"
+				>
+					<Slider
+						width={150}
+						height={40}
+						bind:value={numClusters}
+						min={2}
+						max={20}
+						step={1}
+						valueFormatCallback={(value) => `${value}`}
+						defaultTextColor={"lightgrey"}
+						inputTextColor={"hsl(0, 0%, 12%)"}
+					/>
+				</Label>
 			</div>
 			<div class="row">
 				{#if !$hideMisclassifiedImages && $hasPredictedClass}
