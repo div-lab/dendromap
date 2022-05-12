@@ -348,7 +348,9 @@
 			.data(imageGrid)
 			.join("image")
 			.attr("id", (d) => `image-${d.instance_index}`)
-			.attr("class", (d) => (d.correct ? "right" : "wrong"))
+			.attr("class", (d) =>
+				"correct" in d ? (d.correct ? "right" : "wrong") : ""
+			)
 			.attr("x", (d) => d.imagePosition.x)
 			.attr("y", (d) => d.imagePosition.y + topLabelSpace)
 			.attr("width", imageWidth)

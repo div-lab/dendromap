@@ -27,6 +27,7 @@
 		hasClasses,
 		hasSimilar,
 		hasPredictedClass,
+		imagesToHighlight,
 	} from "../stores/sidebarStore";
 	import { imagesEndpoint } from "../stores/endPoints";
 	import Label from "./sidebarComponents/Label.svelte";
@@ -123,6 +124,10 @@
 					on:change={() => {
 						selectedImage.set(null);
 						currentClassFilter.set(null);
+						showMisclassifications.set(false);
+						highlightIncorrectImages.set(false);
+						highlightSimilarImages.set(false);
+						imagesToHighlight.set([]);
 					}}
 				>
 					{#each options as option, i}
@@ -265,12 +270,7 @@
 							<Switch
 								switchSize={30}
 								onColor={"hsl(0, 0%, 12%)"}
-								initOn={$showMisclassifications}
-								on:switch={() => {
-									showMisclassifications.set(
-										!$showMisclassifications
-									);
-								}}
+								bind:on={$showMisclassifications}
 							/>
 							<div
 								style="margin-top: -4px; margin-left:5px; color: {$showMisclassifications
@@ -291,12 +291,7 @@
 							<Switch
 								switchSize={30}
 								onColor={"hsl(0, 0%, 12%)"}
-								initOn={$highlightIncorrectImages}
-								on:switch={() => {
-									highlightIncorrectImages.set(
-										!$highlightIncorrectImages
-									);
-								}}
+								bind:on={$highlightIncorrectImages}
 							/>
 							<div
 								style="margin-top: -4px; margin-left:5px; color: {$highlightIncorrectImages
@@ -314,12 +309,7 @@
 							<Switch
 								switchSize={30}
 								onColor={"hsl(0, 0%, 12%)"}
-								initOn={$highlightSimilarImages}
-								on:switch={() => {
-									highlightSimilarImages.set(
-										!$highlightSimilarImages
-									);
-								}}
+								bind:on={$highlightSimilarImages}
 							/>
 							<div
 								style="margin-top: -4px; margin-left:5px; color: {$highlightSimilarImages

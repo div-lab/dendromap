@@ -11,7 +11,7 @@
 	export let disabled = false;
 	export let style = "";
 
-	let on = initOn;
+	export let on = initOn;
 	const _switch = () => {
 		on = !on;
 		dispatch("switch", on);
