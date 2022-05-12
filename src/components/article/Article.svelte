@@ -89,7 +89,7 @@
 			<div style="font-size: 20px;">
 				<span
 					style="color: {theme.orange}; font-weight: {theme.bolded};"
-					>Interactions</span
+					>Interaction</span
 				>
 				<span style="color: grey;">and</span>
 				<span
@@ -168,7 +168,7 @@
 		style="font-weight: {theme.light};"
 	>
 		<span style="color: {theme.orange}; font-weight: {theme.bolded};"
-			>Interactions</span
+			>Interaction</span
 		>
 		<span style="color: grey;">and</span>
 		<span style="color: {theme.orange}; font-weight: {theme.bolded};"
@@ -177,9 +177,12 @@
 	</Subsection>
 
 	<Body>
-		This section contains additional information for how the core
-		interactions work and how they can customize or add to the exploration
-		and analysis of images. The features are listed out in paragraphs below.
+		In addition to the main exploration, the <span class="medium"
+			>Sidebar View</span
+		>
+		contains ways to further customize and interact with the <Name />.
+		Below, there are figures and descriptions for how to customize <Name /> for
+		your analysis needs.
 	</Body>
 
 	<Body>
@@ -201,7 +204,7 @@
 		<Figure center>
 			<img
 				src="figures/interaction-example1.svg"
-				alt="clusters-visible"
+				alt="filter"
 				width="75%"
 			/>
 		</Figure>
@@ -219,7 +222,7 @@
 			<img
 				src="figures/class-table.svg"
 				alt="class-table-details"
-				width="75%"
+				width="87%"
 			/>
 		</Figure>
 		<b>Class Table and Image Details</b>. When the actual class and
