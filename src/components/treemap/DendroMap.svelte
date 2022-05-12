@@ -98,11 +98,14 @@
 			obj,
 			(a, b) => b.merging_distance - a.merging_distance
 		);
+	const kClustersUserSpecified = (obj) =>
+		kClustersTreemapCustomSort(obj, customSort);
+
 	$: renderingOptions = {
 		breadth: kClustersTreeMap,
 		min_merging_distance: kClustersMinMerging,
 		max_node_count: kClustersMaxCount,
-		custom_sort: customSort,
+		custom_sort: kClustersUserSpecified,
 	};
 	$: currentRenderingMethod = renderingOptions[renderingMethod];
 
