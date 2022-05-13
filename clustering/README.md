@@ -44,4 +44,20 @@ There are three examples
 -   resnet50 and cifar100 test data (10k instances)
 -   (Experimental) Variational Autoencoder and MNIST train data (60k instances)
 
-The notebooks are provided that generated the code in the [DendroMap Live Site](https://div-lab.github.io/dendromap/) and exported to [DendroMap Data](https://github.com/div-lab/dendromap-data).
+### Use in the DendroMap
+
+Based on the JSON files you export, in the `src/dataOptions.js` file you can add your entry like this:
+
+```javascript
+{
+	dataset: "CIFAR-10",
+	model: "ResNet50",
+	cluster_filepath: "cifar10/clusters/cifar10_resnet50.json",
+	class_cluster_filepath: "cifar10/clusters/cifar10_resnet50_classes.json",
+	image_filepath: "cifar10/images",
+}
+```
+
+to give one example. The file paths are taken relative from the `public` directory.
+
+For more examples and specifications on the data input, go to the [DendroMap Data](https://github.com/div-lab/dendromap-data) repo.

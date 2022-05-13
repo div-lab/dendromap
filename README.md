@@ -20,9 +20,9 @@ be sure to also check out our [Research Paper](https://arxiv.org).
 
 ## Use Your Own Data
 
-In the [public deployment](https://div-lab.github.io/dendromap/), we hosted our data in the [DendroMap Data](https://github.com/div-lab/dendromap-data) repository. You can use your own data by following the instructions in the [DendroMap Data](https://github.com/div-lab/dendromap-data) `README.md`. It will lead you down the right path and to the code we used to generate the clustering with the correct format.
+In the [public deployment](https://div-lab.github.io/dendromap/), we hosted our data in the [DendroMap Data](https://github.com/div-lab/dendromap-data) repository. You can use your own data by following the instructions and example in the [DendroMap Data](https://github.com/div-lab/dendromap-data) `README.md` and you can use our python functions found in the `clustering` folder in this repo. There, you will find specific examples and instructions for how to generate the clustering files.
 
-Once you have these files, you can add another option in the `src/dataOptions.js` file as an object to specify how to read your data with the correct format. This is also detailed in the [DendroMap Data](https://github.com/div-lab/dendromap-data) `README.md`, and is simple as adding an option like this
+After generating those files, you can add another option in the `src/dataOptions.js` file as an object to specify how to read your data with the correct format. This is also detailed in the [DendroMap Data](https://github.com/div-lab/dendromap-data) `README.md`, and is simple as adding an option like this:
 
 ```javascript
 {
@@ -34,9 +34,7 @@ Once you have these files, you can add another option in the `src/dataOptions.js
 }
 ```
 
-in the `src/dataOptions.js` options array.
-
-The python that generates the clustering files is housed in [DendroMap Notebooks](https://github.com/div-lab/dendromap-notebooks). These include the examples that generated the data in [DendroMap Data](https://github.com/div-lab/dendromap-data).
+in the `src/dataOptions.js` options array. Paths start from the `public` folder, so put your data in there. For more information, go to the `README.md` in the `clustering` folder. Notebooks that computed the data in [DendroMap Data](https://github.com/div-lab/dendromap-data) are located there.
 
 ## DendroMap Component
 
@@ -135,7 +133,6 @@ then navigate to [port 8080](http://localhost:8080/) for the static build server
 ## Links
 
 -   [DendroMap Live Site](https://div-lab.github.io/dendromap/)
--   [DendroMap Paper](https://arxiv.org/) change this
+-   [DendroMap Paper](https://arxiv.org/) change this once we have a link
 -   [DendroMap Code](https://github.com/div-lab/dendromap) (**you are here**)
 -   [DendroMap Data](https://github.com/div-lab/dendromap-data)
--   [DendroMap Notebooks](https://github.com/div-lab/dendromap-notebooks)
