@@ -34,6 +34,25 @@ The python that generates the clustering files is housed in [DendroMap Notebooks
 
 ## DendroMap Component
 
+The DendroMap treemap visualization itself (not the whole project) only relies on having [d3.js](https://d3js.org/) and the accompanying Javascript files in the `src/components/dendroMap` directory. You can reuse that [Svelte](https://svelte.dev/) component by importing
+from `src/components/dendroMap/DendroMap.svelte`.
+
+The Component is used in `src/App.svelte` for an example on what props it takes. Here is the rundown of a simple example
+
+at the bare minimum you can create the DendroMap component with these props (I show the type after the colon).
+
+```jsx
+<DendroMap
+	dendrogramData:JSON // the JSON contained the dendrogram from the dendrogram-data and dendrogram-notebook repos.
+	imageFilepath:string // relative path from public dir
+	imageWidth:number
+	imageHeight:number
+	width:number
+	height:number
+	numClustersShowing:number // > 1
+/>
+```
+
 ## Run Locally!
 
 This project uses [Svelte](https://svelte.dev/). You can run the code on your local machine by using one of the following: development or build.
