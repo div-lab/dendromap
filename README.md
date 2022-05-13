@@ -10,7 +10,13 @@ DendroMap adds structure to the data by hierarchically clustering together simil
 	<img src="https://user-images.githubusercontent.com/65095341/168213776-9181ab6e-b9b8-4557-9ead-b1abf7a50041.gif" />
 </a>
 
-Check out the [live demo of DendroMap](https://div-lab.github.io/dendromap/) and explore for yourself on a few different datasets.
+Check out the [live demo of DendroMap](https://div-lab.github.io/dendromap/) and explore for yourself on a few different datasets. If you're interested in
+
+-   the DendroMap motivations
+-   how we created the DendroMap visualization
+-   DendroMap's effectiveness: user study on DendroMap compared to t-SNE grid for exploration
+
+be sure to also check out our [Research Paper](https://arxiv.org).
 
 ## Use Your Own Data
 
@@ -129,6 +135,7 @@ then navigate to [port 8080](http://localhost:8080/) for the static build server
 ## Links
 
 -   [DendroMap Live Site](https://div-lab.github.io/dendromap/)
+-   [DendroMap Paper](https://arxiv.org/) change this
 -   [DendroMap Code](https://github.com/div-lab/dendromap) (**you are here**)
 -   [DendroMap Data](https://github.com/div-lab/dendromap-data)
 -   [DendroMap Notebooks](https://github.com/div-lab/dendromap-notebooks)
