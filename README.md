@@ -12,12 +12,29 @@ DendroMap adds structure to the data by hierarchically clustering together simil
 
 Check out the [live demo of DendroMap](https://div-lab.github.io/dendromap/) and explore for yourself on a few different datasets.
 
-Describe how to use your own data
+## Use Your Own Data
 
-Paper link here.
+In the [public deployment](https://div-lab.github.io/dendromap/), we hosted our data in the [DendroMap Data](https://github.com/div-lab/dendromap-data) repository. You can use your own data by following the instructions in the [DendroMap Data](https://github.com/div-lab/dendromap-data) `README.md`. It will lead you down the right path and to the code we used to generate the clustering with the correct format.
+
+Once you have these files, you can add another option in the `src/dataOptions.js` file as an object to specify how to read your data with the correct format. This is also detailed in the [DendroMap Data](https://github.com/div-lab/dendromap-data) `README.md`, and is simple as adding an option like this
+
+```javascript
+{
+	dataset: "YOUR DATASET NAME",
+	model: "YOUR MODEL NAME",
+	cluster_filepath: "CLUSTER_FILEPATH",
+	class_cluster_filepath: "CLASS_CLUSTER_FILEPATH**OPTIONAL**",
+	image_filepath: "IMAGE_FILEPATH",
+}
+```
+
+in the `src/dataOptions.js` options array.
+
+The python that generates the clustering files is housed in [DendroMap Notebooks](https://github.com/div-lab/dendromap-notebooks). These include the examples that generated the data in [DendroMap Data](https://github.com/div-lab/dendromap-data).
+
+## DendroMap Component
 
 ## Run Locally!
-
 
 This project uses [Svelte](https://svelte.dev/). You can run the code on your local machine by using one of the following: development or build.
 
@@ -41,3 +58,10 @@ npm run start		# run on port 8080
 ```
 
 then navigate to [port 8080](http://localhost:8080/) for the static build server.
+
+## Links
+
+-   [DendroMap Live Site](https://div-lab.github.io/dendromap/)
+-   [DendroMap Code](https://github.com/div-lab/dendromap) (**you are here**)
+-   [DendroMap Data](https://github.com/div-lab/dendromap-data)
+-   [DendroMap Notebooks](https://github.com/div-lab/dendromap-notebooks)
