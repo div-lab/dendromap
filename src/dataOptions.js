@@ -1,12 +1,14 @@
 const options = [
-	// {
-	// 	dataset: "MNIST",
-	// 	model: "Autoencoder",
-	// 	cluster_filepath:
-	// 		"https://div-lab.github.io/dendromap-data/mnist/clusters/vae_mnist_clusters.json",
-	// 	classes_cluster_filepath: undefined,
-	// 	image_filepath: "https://div-lab.github.io/dendromap-data/mnist/images",
-	// },
+	{
+		dataset: "MNIST",
+		model: "Autoencoder",
+		cluster_filepath:
+			"https://div-lab.github.io/dendromap-data/experimental/mnist/clusters/vae_mnist_clusters.json",
+		classes_cluster_filepath: undefined,
+		image_filepath:
+			"https://div-lab.github.io/dendromap-data/experimental/mnist/images",
+		experimental: true,
+	},
 	{
 		dataset: "CIFAR-10",
 		model: "ResNet-50",

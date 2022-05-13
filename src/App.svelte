@@ -115,8 +115,38 @@
 		console.log = () => {};
 	}
 
+	/**
+	 * Takes in an object with keys that are the URL param name and the value is a callback that contains the url value
+	 * @param {paramName: (value) => void} requestedParamsObj
+	 */
+	function getURLParameters(requestedParamsObj) {
+		const requestedEntries = Object.entries(requestedParamsObj);
+		const urlParameters = new URLSearchParams(window.location.search);
+		requestedEntries.forEach(([parameter, callback], i) => {
+			if (urlParameters.has(parameter)) {
+				const value = urlParameters.get(parameter);
+				callback(value);
+			} else {
+				callback(undefined);
+			}
+		});
+	}
+
 	// props
 	export let options; // settings you can change in main.js that shows up in the dropdown in the sidebar
+
+	getURLParameters({
+		experiment: (value) => {
+			if (value !== undefined) {
+			} else {
+				options.forEach((option, index) => {
+					if (option.experimental) {
+						options.splice(index, 1);
+					}
+				});
+			}
+		},
+	});
 	export let silenceConsole = false;
 	if (silenceConsole) {
 		silenceConsoleLogs();
