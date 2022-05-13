@@ -126,7 +126,7 @@ then navigate to [port 8080](http://localhost:8080/) for a live-reloading on fil
 ```bash
 cd dendromap		# inside the dendromap directory
 npm install       	# install packages if you haven't
-npm run build       # build project
+npm run build       	# build project
 npm run start		# run on port 8080
 ```
 
