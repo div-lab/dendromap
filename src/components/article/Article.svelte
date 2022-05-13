@@ -51,22 +51,22 @@
 	</Body>
 	<Body>
 		A deep understanding of your data can be vital to train or debug your
-		model effectively. However, due to the lack of metadata and large-scale
-		of image datasets, it can be difficult to get any insight into your
-		data.
+		model effectively. However, due to the lack of structure and
+		little-to-no metadata, it can be difficult to gain any insight into
+		large-scale image datasets.
 	</Body>
 	<Body>
-		<Name /> adds structure to the data by grouping together similar images.
-		Then, hierarchies of similar image groups are displayed in a modified treemap
-		for you to explore. To reveal more images and clusters, click on a rectangle
-		in the <Name /> to <i>zoom-in</i> to that group of images. To
-		<i>zoom-out</i>, click on the outermost parent rectangle. Clicking on an
-		image will reveal more information in the
-		<span class="medium">Image Details</span>.
+		<Name /> adds structure to the data by hierarchically clustering together
+		similar images. Then, the clusters are displayed in a modified treemap visualization
+		that supports <i>zooming</i>.
 	</Body>
+
 	<Body>
 		If you're interested in learning more, <span class="medium">click</span>
-		to scroll on one of the three sections below.</Body
+		to scroll on one of the three sections below. If you want to see who created
+		<Name />, scroll down to <Link href="#who-created"
+			><span class="medium">Who Created <Name />? </span></Link
+		></Body
 	>
 	<div style="display: flex; justify-content:space-between;">
 		<SectionPreview
@@ -254,15 +254,12 @@
 			</li>
 		</ul>
 		and more, please check out our <Link href="https://arxiv.org" openNewTab
-			>Research Paper <PaperIcon
-				height={15}
-				fill="hsla(206, 90%, 20%, 0.7)"
-			/></Link
+			>Research Paper <PaperIcon height={15} fill="black" /></Link
 		>.
 		<PaperLink />
 	</Body>
 
-	<Section>Who created <Name />?</Section>
+	<Section id="who-created">Who Created <Name />?</Section>
 	<Body>
 		<Name /> was created by
 		{#each people as person, i}
