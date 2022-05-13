@@ -57,7 +57,7 @@
 <div id="sidebar" style="">
 	<div
 		class="sidebar-item"
-		style="display: flex; justify-content: start; text-transform: capitalize; padding-top: 0; gap: 40px;"
+		style="display: flex; justify-content: start;  padding-top: 0; gap: 40px;"
 	>
 		<div>
 			<button
@@ -70,7 +70,7 @@
 				<span class="medium">Click to Open</span>: What is <Name />?
 			</button>
 		</div>
-		<Label outerDivStyle="width: 150px;" label="Dataset">
+		<Label outerDivStyle="width: 150px;" label="Dataset and Model">
 			<select
 				bind:value={selectedOption}
 				on:change={() => {

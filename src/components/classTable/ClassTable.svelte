@@ -284,12 +284,12 @@
 </script>
 
 <div id="table-settings">
-	<Label label="Search" outerDivStyle="margin-right: 50px;">
+	<Label label="Search Class" outerDivStyle="margin-right: 50px;">
 		<input
 			type="text"
 			name="class-search"
 			id="class-search"
-			placeholder="Enter Class..."
+			placeholder="Search..."
 			bind:value={search}
 		/>
 	</Label>
