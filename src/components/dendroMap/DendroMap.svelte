@@ -71,11 +71,12 @@
 	export let height = 1000;
 	export let svgStyle = "";
 	export let transitionSpeed = 750;
-	export let innerPadding = 0;
-	export let topPadding = 0;
+	export let outerPadding = 10;
+	export let innerPadding = 10;
+	export let topPadding = 10;
+	export let labelYSpace = 20;
 	export let highlightedOpacity = 1.0;
 	export let hiddenOpacity = 0.25;
-	export let topLabelSpace = 20;
 	export let imageFilepath;
 	export let imagesToFocus = [];
 	export let labelColorCallback = (d) => (d.height < 5 ? "white" : "black");
@@ -377,7 +378,7 @@
 			x0,
 			y0,
 			x1,
-			y1 - topLabelSpace,
+			y1 - labelYSpace,
 			imageWidth,
 			imageHeight,
 			mutatedCluster
@@ -392,7 +393,7 @@
 				"correct" in d ? (d.correct ? "right" : "wrong") : ""
 			)
 			.attr("x", (d) => d.imagePosition.x)
-			.attr("y", (d) => d.imagePosition.y + topLabelSpace)
+			.attr("y", (d) => d.imagePosition.y + labelYSpace)
 			.attr("width", imageWidth)
 			.attr("height", imageHeight)
 			.attr("href", (d) => `${imageFilepath}/${d.filename}`)
@@ -424,16 +425,11 @@
 					console.log(d);
 					throw Error("These must be present to render");
 				}
-				return `translate(${x(d.x0) - innerPadding / 2},${
-					y(d.y0) - innerPadding / 2
-				})`;
+				return `translate(${x(d.x0)},${y(d.y0)})`;
 			})
 			.select(".treemap-rect")
-			.attr("width", (d) => x(d.x1) - x(d.x0) + innerPadding)
-			.attr(
-				"height",
-				(d) => y(d.y1) - y(d.y0) + innerPadding + topPadding
-			);
+			.attr("width", (d) => x(d.x1) - x(d.x0))
+			.attr("height", (d) => y(d.y1) - y(d.y0));
 		subGroups
 			.select(".label-text")
 			.attr("x", 5)
@@ -458,6 +454,9 @@
 			kClusters: numClustersShowing,
 			imageWidth,
 			imageHeight,
+			innerPadding,
+			outerPadding,
+			topPadding,
 		});
 
 		// renders the groups and labels the leaf nodes with class .leaf
