@@ -122,6 +122,7 @@
 		console.log("console log is silenced 😴");
 		console.log = () => {};
 	}
+	silenceConsoleLogs();
 
 	// props
 	export let options; // settings you can change in main.js that shows up in the dropdown in the sidebar
