@@ -21,7 +21,7 @@ const options = [
 	},
 	{
 		dataset: "MNIST",
-		model: "VAE",
+		model: "Autoencoder",
 		cluster_filepath:
 			"https://div-lab.github.io/dendromap-data/mnist/clusters/vae_mnist_clusters.json",
 		classes_cluster_filepath: undefined,
