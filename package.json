@@ -1,7 +1,9 @@
 {
-  "name": "image-treemap",
+  "name": "dendromap",
   "version": "1.0.0",
   "private": true,
+  "license": "MIT",
+  "author":"div-lab",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
