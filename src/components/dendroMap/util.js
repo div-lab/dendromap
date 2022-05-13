@@ -207,3 +207,65 @@ export function classCountsLabel(
 	const clippedLabel = labelString.slice(0, -2); // remove the comma and space on the last one
 	return clippedLabel;
 }
+
+export function formatDendrogram(unformattedRootNode, hasPredictions = false) {
+	function forEachLeaf(parent, callback) {
+		if (parent.leaf) {
+			callback(parent);
+			return;
+		}
+		parent.children.forEach((child) => {
+			forEachLeaf(child, callback);
+		});
+	}
+	// remove this by init value as 1 for leaves in python
+	forEachLeaf(unformattedRootNode, (node) => {
+		node.value = 1;
+		if (hasPredictions) {
+			node.correct = node.correct_count === 1;
+		}
+	});
+	const hierarchicalData = d3
+		.hierarchy(unformattedRootNode)
+		.sum((d) => d.value);
+	console.log(hierarchicalData);
+	assignImageClusterToEachNode(hierarchicalData); // creates a cluster property on each node in the tree
+	return hierarchicalData;
+}
+
+/**
+ * Adds a json key to each node that contains an array
+ * of what is in the cluster. The very top parent should include all.
+ * @param {d3.HierarchyNode} parent
+ * @param {any[]} whatToAddToCluster
+ */
+export function assignImageClusterToEachNode(
+	parent,
+	whatToAddToCluster = (node) => node.data
+) {
+	// parent.parent is null if d3.hierarchy was run on the parent first
+	if (parent.parent === undefined)
+		throw Error("Must run through d3.hierarchy first");
+
+	// starts from leaves and merges upwards
+	// this requires the parent pointer to be present in every node
+	const _accumulateUp = (node, initialValue) => {
+		// stopping condition
+		if (node.parent !== null) {
+			if (node.parent.cluster === undefined) {
+				node.parent.cluster = [initialValue];
+			} else {
+				node.parent.cluster.push(initialValue);
+			}
+			_accumulateUp(node.parent, initialValue);
+		}
+	};
+
+	// from bottom up, follow the merging and add file to the cluster
+	// top has all the files and each leaf should have individual files by the end
+	parent.leaves().forEach((leaf) => {
+		const value = whatToAddToCluster(leaf);
+		leaf.cluster = [value];
+		_accumulateUp(leaf, value);
+	});
+}

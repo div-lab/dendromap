@@ -57,7 +57,7 @@
 <div id="sidebar" style="">
 	<div
 		class="sidebar-item"
-		style="display: flex; justify-content: start; text-transform: capitalize; padding-top: 0; gap: 40px;"
+		style="display: flex; justify-content: start;  padding-top: 0; gap: 40px;"
 	>
 		<div>
 			<button
@@ -67,10 +67,10 @@
 					articleSidebarOpen = !articleSidebarOpen;
 				}}
 			>
-				<b>Open Article</b>: What is <Name />?
+				<span class="medium">Click to Open</span>: What is <Name />?
 			</button>
 		</div>
-		<Label outerDivStyle="width: 150px;" label="Dataset">
+		<Label outerDivStyle="width: 150px;" label="Dataset and Model">
 			<select
 				bind:value={selectedOption}
 				on:change={() => {
@@ -282,7 +282,14 @@
 		cursor: pointer;
 		border-width: 1px;
 		border-radius: 3px;
-		border-color: rgba(255, 166, 0, 0.431);
+		border: 1px solid rgba(0, 0, 0, 0.1);
+		box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.05);
 		font-size: 16px;
+	}
+	.help-button:hover {
+		box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.1);
+	}
+	span.medium {
+		font-weight: 600;
 	}
 </style>

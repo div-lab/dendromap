@@ -8,9 +8,19 @@
 
 <style>
 	a {
-		border-bottom-color: hsla(206, 90%, 20%, 0.3);
+		--h: 0;
+		--s: 0%;
+		--l: 0%;
+		--a-underline: 0.3;
+		--a-text: 0.7;
+		border-bottom-color: hsla(
+			var(--h),
+			var(--s),
+			var(--l),
+			var(--a-underline)
+		);
 		font-size: 0.9em;
-		color: hsla(206, 90%, 20%, 0.7);
+		color: hsla(var(--h), var(--s), var(--l), var(--a-text));
 		text-decoration: none;
 		border-bottom-width: 1px;
 		border-bottom-style: solid;
@@ -18,7 +28,7 @@
 	a:hover {
 		border-bottom-width: 1px;
 		border-bottom-style: solid;
-		border-bottom-color: hsla(206, 90%, 20%, 0.7);
-		color: hsla(206, 90%, 20%, 1);
+		--a-underline: 0.7;
+		--a-text: 1;
 	}
 </style>

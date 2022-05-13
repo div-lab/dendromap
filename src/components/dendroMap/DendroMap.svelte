@@ -1,7 +1,12 @@
 <script>
 	import * as d3 from "d3";
 	import { onMount, createEventDispatcher } from "svelte";
-	import { treemapColorGenerator, ID, forEachSelection } from "./util";
+	import {
+		treemapColorGenerator,
+		ID,
+		forEachSelection,
+		formatDendrogram,
+	} from "./util";
 	import { highlightImages, resetOpacity } from "./highlightImages";
 	import { kClustersTreeMap, sortingKClustersTreeMap } from "./treemapper";
 
@@ -46,6 +51,7 @@
 
 	/** @type {HierarchyNode} */
 	export let dendrogramData = {};
+
 	export let imageHeight;
 	export let imageWidth;
 	export let numClustersShowing = 8;
@@ -65,11 +71,12 @@
 	export let height = 1000;
 	export let svgStyle = "";
 	export let transitionSpeed = 750;
-	export let innerPadding = 0;
-	export let topPadding = 0;
+	export let outerPadding = 10;
+	export let innerPadding = 10;
+	export let topPadding = 10;
+	export let labelYSpace = 20;
 	export let highlightedOpacity = 1.0;
 	export let hiddenOpacity = 0.25;
-	export let topLabelSpace = 20;
 	export let imageFilepath;
 	export let imagesToFocus = [];
 	export let labelColorCallback = (d) => (d.height < 5 ? "white" : "black");
@@ -78,6 +85,9 @@
 	export let focusMisclassified = undefined;
 	export let misclassificationColor = "red";
 	export let outlineStrokeWidth = "2px";
+
+	// format the data correctly
+	$: formattedDendrogramData = formatDendrogram(dendrogramData, true);
 
 	/** @type {"breadth" | "min_merging_distance" | "max_node_count" | "custom_sort"} */
 	export let renderingMethod = "breadth";
@@ -122,7 +132,7 @@
 	let y = d3.scaleLinear().rangeRound([0, height]);
 	let ogRootCount = 0;
 	function init() {
-		ogRootCount = dendrogramData.data.node_count;
+		ogRootCount = formattedDendrogramData.data.node_count;
 		// create the svg that we will work with
 		svg = d3.select(svelteSvg);
 		svg.attr("style", svgStyle).attr("width", width).attr("height", height);
@@ -132,7 +142,7 @@
 		// pick a color for the rectangles as they descend deeper
 		color = treemapColorGenerator(
 			clusterColorInterpolateCallback,
-			dendrogramData.height,
+			formattedDendrogramData.height,
 			{
 				offset: 1,
 				reverseColorDirection: false,
@@ -140,9 +150,10 @@
 		);
 
 		// render the treemap
-		group = svg.append("g").call(render, dendrogramData);
-		currentParentCluster = dendrogramData;
+		group = svg.append("g").call(render, formattedDendrogramData);
+		currentParentCluster = formattedDendrogramData;
 	}
+
 	onMount(() => {
 		init();
 	});
@@ -367,7 +378,7 @@
 			x0,
 			y0,
 			x1,
-			y1 - topLabelSpace,
+			y1 - labelYSpace,
 			imageWidth,
 			imageHeight,
 			mutatedCluster
@@ -382,7 +393,7 @@
 				"correct" in d ? (d.correct ? "right" : "wrong") : ""
 			)
 			.attr("x", (d) => d.imagePosition.x)
-			.attr("y", (d) => d.imagePosition.y + topLabelSpace)
+			.attr("y", (d) => d.imagePosition.y + labelYSpace)
 			.attr("width", imageWidth)
 			.attr("height", imageHeight)
 			.attr("href", (d) => `${imageFilepath}/${d.filename}`)
@@ -414,16 +425,11 @@
 					console.log(d);
 					throw Error("These must be present to render");
 				}
-				return `translate(${x(d.x0) - innerPadding / 2},${
-					y(d.y0) - innerPadding / 2
-				})`;
+				return `translate(${x(d.x0)},${y(d.y0)})`;
 			})
 			.select(".treemap-rect")
-			.attr("width", (d) => x(d.x1) - x(d.x0) + innerPadding)
-			.attr(
-				"height",
-				(d) => y(d.y1) - y(d.y0) + innerPadding + topPadding
-			);
+			.attr("width", (d) => x(d.x1) - x(d.x0))
+			.attr("height", (d) => y(d.y1) - y(d.y0));
 		subGroups
 			.select(".label-text")
 			.attr("x", 5)
@@ -448,6 +454,9 @@
 			kClusters: numClustersShowing,
 			imageWidth,
 			imageHeight,
+			innerPadding,
+			outerPadding,
+			topPadding,
 		});
 
 		// renders the groups and labels the leaf nodes with class .leaf
@@ -488,7 +497,7 @@
 		})
 			.attr("fill", colorByRemainingHeight) //appends rectColor to d
 			.attr("stroke", (d, i) => {
-				if (false && i === 0 && d !== dendrogramData) {
+				if (false && i === 0 && d !== formattedDendrogramData) {
 					d.strokeColor = d3.color("steelblue").brighter(0.2);
 				} else {
 					d.strokeColor = d.rectColor.darker(0.2);
@@ -581,9 +590,9 @@
 			});
 		rect.append("title").text((d, i) => {
 			let clusterLabel = ``;
-			if (d === root && d !== dendrogramData) {
+			if (d === root && d !== formattedDendrogramData) {
 				clusterLabel = `Click to go back from cluster`;
-			} else if (d === dendrogramData) {
+			} else if (d === formattedDendrogramData) {
 			} else if (d.data.leaf) {
 				clusterLabel = `Only 1 image, can't go further`;
 			} else {
@@ -592,7 +601,7 @@
 			return clusterLabel;
 		});
 		rect.attr("cursor", (d) =>
-			d.data.leaf || d === dendrogramData ? "default" : "pointer"
+			d.data.leaf || d === formattedDendrogramData ? "default" : "pointer"
 		);
 	}
 	function renderLabel(text) {

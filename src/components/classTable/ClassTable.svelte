@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from "svelte";
 	import Bar from "./Bar.svelte";
-	import { highlightImages, resetOpacity } from "../treemap/highlightImages";
 	import Label from "../sidebarComponents/Label.svelte";
 	import Rate from "./Rate.svelte";
 	import Switch from "../sidebarComponents/Switch.svelte";
@@ -284,12 +283,12 @@
 </script>
 
 <div id="table-settings">
-	<Label label="Search" outerDivStyle="margin-right: 50px;">
+	<Label label="Search Class" outerDivStyle="margin-right: 50px;">
 		<input
 			type="text"
 			name="class-search"
 			id="class-search"
-			placeholder="Enter Class..."
+			placeholder="Search..."
 			bind:value={search}
 		/>
 	</Label>
@@ -372,10 +371,10 @@
 								(node) => node.instance_index
 							);
 
-							highlightImages({ instancesToHighlight });
+							imagesToHighlight.set(instancesToHighlight);
 						}}
 						on:mouseleave={() => {
-							resetOpacity();
+							imagesToHighlight.set([]);
 						}}
 					>
 						<Bar
