@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from "svelte";
 	import Bar from "./Bar.svelte";
-	import { highlightImages, resetOpacity } from "../treemap/highlightImages";
 	import Label from "../sidebarComponents/Label.svelte";
 	import Rate from "./Rate.svelte";
 	import Switch from "../sidebarComponents/Switch.svelte";
@@ -372,10 +371,10 @@
 								(node) => node.instance_index
 							);
 
-							highlightImages({ instancesToHighlight });
+							imagesToHighlight.set(instancesToHighlight);
 						}}
 						on:mouseleave={() => {
-							resetOpacity();
+							imagesToHighlight.set([]);
 						}}
 					>
 						<Bar

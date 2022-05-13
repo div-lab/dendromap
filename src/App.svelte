@@ -28,7 +28,7 @@
 	import * as links from "./links";
 
 	import Sidebar from "./components/Sidebar.svelte";
-	import DendroMap from "./components/treemap/DendroMap.svelte";
+	import DendroMap from "./components/dendroMap/DendroMap.svelte";
 	import GithubIcon from "./components/misc/GithubIcon.svelte";
 	import PaperIcon from "./components/misc/PaperIcon.svelte";
 	import ArticleSidebar from "./components/article/ArticleSidebar.svelte";
