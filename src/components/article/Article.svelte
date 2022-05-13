@@ -179,12 +179,10 @@
 	</Subsection>
 
 	<Body>
-		In addition to the main exploration, the <span class="medium"
-			>Sidebar View</span
-		>
-		contains ways to further customize and interact with the <Name />.
-		Below, there are figures and descriptions for how to customize <Name /> for
-		your analysis needs.
+		The <span class="medium">Sidebar View</span>, on the left side, contains
+		more ways to interact with and change up the <Name />. Below, are some
+		of those examples to customize and further interact with <Name /> for greater
+		capabilities.
 	</Body>
 
 	<Body>
@@ -196,11 +194,11 @@
 			/>
 		</Figure>
 		<b>Clusters Visible</b>. You can increase the number of image clusters
-		you see by increasing this slider. More clusters showing will show more
-		splits between images for a more detailed exploration at each level of
-		the tree. Alternatively, having less clusters showing will create more
-		of a high-level overview of the images.
+		visible to show further down the hierarchy of similar image groups. Less
+		clusters visible will correspond to a high-level overview, whereas many
+		clusters visible will show more splits between image groups.
 	</Body>
+
 	<Body style="margin-top: 10px;">
 		<Figure center>
 			<img
@@ -210,14 +208,15 @@
 			/>
 		</Figure>
 		<b>Class Filter and Highlighting</b>. If classes are present, you can
-		filter the <Name /> by typing out or selecting a class that you want to only
-		see with the <span class="medium">Class Filter</span>. If class
-		predictions are also available, you can toggle to highlight the
-		misclassified images with the
+		filter the <Name /> by typing out or selecting a class. If class predictions
+		are also available, you can toggle to highlight the misclassified images
+		with the
 		<span class="medium">Focus Misclassified</span>
 		switch or toggle to highlight them with a red border using the
-		<span class="medium">Highlight Misclassified</span> switch.
+		<span class="medium">Highlight Misclassified</span> switch. This is helpful
+		for finding groups of images where your model underperforms.
 	</Body>
+
 	<Body style="margin-top: 10px;">
 		<Figure center>
 			<img
@@ -231,9 +230,10 @@
 		shows up in the sidebar. This table shows the counts and important rates,
 		like accuracy, for class-level error analysis. You can hover over an entry
 		in the table to have the corresponding images that went into the calculation
-		highlighted in the <Name />. For a closer look at an image, you can also
-		click on the image itself to see it larger and view similar images
-		computed from its high-dimensional representation inside the
+		highlighted in the <Name />. The <span class="medium">Class Table</span>
+		updates based on the current parent cluster showing. For a closer look at
+		an image, you can also click on the image itself to see it larger and view
+		similar images computed from its high-dimensional representation inside the
 		<span class="medium">Image Details</span>.
 	</Body>
 
@@ -263,10 +263,10 @@
 		</ul>
 		and more, please check out our <Link href="https://arxiv.org" openNewTab
 			>Research Paper <PaperIcon height={15} fill="black" /></Link
-		>. For development use check out, the
+		> and our
 		<Link href="https://github.com/div-lab/dendromap" openNewTab>
-			Github <GithubIcon height={15} fill="black" />
-		</Link> repository for <Name />.
+			Github Repository <GithubIcon height={15} fill="black" />
+		</Link> for <Name />.
 		<PaperLink />
 	</Body>
 
@@ -282,7 +282,6 @@
 			>Data Interaction and Visualization (DIV) Lab</Link
 		>.
 	</Body>
-	<Body>We would like to thank...</Body>
 </Writing>
 <div class="bottom-space" />
 
