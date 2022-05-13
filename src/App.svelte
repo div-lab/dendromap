@@ -126,6 +126,10 @@
 
 	// props
 	export let options; // settings you can change in main.js that shows up in the dropdown in the sidebar
+	export let silenceConsole = false;
+	if (silenceConsole) {
+		silenceConsoleLogs();
+	}
 
 	// vars
 	let selectedOptionIndex = 0;
