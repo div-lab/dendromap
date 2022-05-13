@@ -41,7 +41,7 @@ The Component is used in `src/App.svelte` for an example on what props it takes.
 
 ```jsx
 <DendroMap
-	dendrogramData:JSON // the JSON contained the dendrogram from the dendrogram-data and dendrogram-notebook repos.
+	dendrogramData:dendrogramNode // (root node as nested JSON from dendrogram-data repo)
 	imageFilepath:string // relative path from public dir
 	imageWidth:number
 	imageHeight:number
@@ -55,15 +55,13 @@ A more comprehensive list of props is below, but please look in the `src/compone
 
 ```jsx
 <DendroMap
-	// the JSON contained the dendrogram from the dendrogram-data and dendrogram-notebook repos.
-	dendrogramData:JSON
-	imageFilepath:string // relative path from public dir
-	imageWidth:number
-	imageHeight:number
-	width:number
-	height:number
-	numClustersShowing:number // > 1
-
+	dendrogramData: dendrogramNode // (root node as nested JSON from dendrogram-data repo)
+	imageFilepath: string // relative path from public dir
+	imageWidth: number
+	imageHeight: number
+	width: number
+	height: number
+	numClustersShowing: number // > 1
 
 	// the very long list of optional props that you can use to customize the DendroMap
 	highlightedOpacity?: number // between [0.0, 1.0]
@@ -85,7 +83,7 @@ A more comprehensive list of props is below, but please look in the `src/compone
 	// max_node_count traverses and splits the next largest sized node, resulting in an even rendering
 	renderingMethod?: "breadth" | "min_merging_distance" | "max_node_count" | "custom_sort"
 	// this is only in effect if the renderingMethod is "custom_sort". Nodes last are popped and rendered first in the sort
-	customSort?: (a: node, b: node) => number
+	customSort?: (a: dendrogramNode, b: dendrogramNode) => number // see example in code
 	imagesToFocus?: number[] // instance index of the ones to highlight
 	outlineMisclassified?: boolean
 	focusMisclassified?: boolean
