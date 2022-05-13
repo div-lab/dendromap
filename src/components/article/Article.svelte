@@ -187,7 +187,6 @@
 				width="100%"
 			/>
 		</Figure>
-		<div style="margin-top: 20px;" />
 		<b>Clusters Visible</b>. You can increase the number of image clusters
 		you see by increasing this slider. More clusters showing will show more
 		splits between images for a more detailed exploration at each level of
