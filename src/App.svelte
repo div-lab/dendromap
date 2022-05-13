@@ -141,7 +141,7 @@
 
 	// indicators of when things are done or if we have a certain item
 	let changedDataset = false;
-	let articleOpen = true;
+	let articleOpen = false;
 	let showTreemap = false;
 	let classClusteringsPresent;
 
