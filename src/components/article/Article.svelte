@@ -11,6 +11,7 @@
 	import people from "./people";
 	import Figure from "./Figure.svelte";
 	import { color } from "d3";
+	import GithubIcon from "../misc/GithubIcon.svelte";
 
 	class Color {
 		constructor(_color) {
@@ -63,7 +64,11 @@
 
 	<Body>
 		If you're interested in learning more, <span class="medium">click</span>
-		to scroll on one of the three sections below. If you want to see who created
+		to scroll on one of the three
+		<span style="background-color: {theme.blue.opacity(0.3)};">sec</span
+		><span style="background-color: {theme.orange.opacity(0.3)};">tio</span
+		><span style="background-color: {theme.green.opacity(0.3)};">ns</span>
+		below. If you want to see who created
 		<Name />, scroll down to <Link href="#who-created"
 			><span class="medium">Who Created <Name />? </span></Link
 		></Body
@@ -132,8 +137,8 @@
 		is 8). Each image group represents the preview for that hierarchy of similar
 		images. You can click on a cluster in the <Name /> to <i>zoom-in</i> and
 		take up the entire screen with only those image groups. You can continue
-		to <i>zoom</i> or choose to <i>zoom-out</i> by clicking the outermost parent
-		cluster. Below, are examples of these interactions.
+		to <i>zoom-in</i> or choose to <i>zoom-out</i> by clicking the outermost
+		parent cluster. Below, are examples of these core exploration interactions.
 	</Body>
 
 	<Body>
@@ -141,19 +146,22 @@
 			<img src="figures/zoom-in.svg" alt="zoom-in" width="85%" />
 		</Figure>
 		<b>Zooming In</b>. By clicking on a grey-colored rectangle, you can
-		<i>zoom-in</i> to that image group and reveal more clusters.
+		<i>zoom-in</i> to that image group and reveal more clusters. The more
+		you <i>zoom-in</i>, the more <i>specific</i> the image groups become.
 	</Body>
 	<Body>
 		<Figure center>
 			<img src="figures/zoom-out.svg" alt="zoom-out" width="50%" />
 		</Figure>
 		<b>Zooming Out</b>. By clicking on the outermost parent cluster, you can
-		<i>zoom-out</i> and go back to where you were before.
+		<i>zoom-out</i> and go back to where you were before. The more you
+		<i>zoom-out</i>, the more <i>general</i> the image groups become.
 	</Body>
 
 	<Body>
-		With these two interactions alone you can explore groups of similar
-		images down to the instances themselves (even for large datasets).
+		Zooming allows for scalable and structured visualization of many images
+		without overwhelming you. If you haven't already, try exploring with
+		these interactions in the <Name />.
 	</Body>
 
 	<Subsection
@@ -255,7 +263,10 @@
 		</ul>
 		and more, please check out our <Link href="https://arxiv.org" openNewTab
 			>Research Paper <PaperIcon height={15} fill="black" /></Link
-		>.
+		>. For development use check out, the
+		<Link href="https://github.com/div-lab/dendromap" openNewTab>
+			Github <GithubIcon height={15} fill="black" />
+		</Link> repository for <Name />.
 		<PaperLink />
 	</Body>
 
