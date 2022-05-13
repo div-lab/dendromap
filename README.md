@@ -7,7 +7,7 @@ A deep understanding of your data can be vital to train or debug your model effe
 DendroMap adds structure to the data by hierarchically clustering together similar images. Then, the clusters are displayed in a modified treemap visualization that supports zooming.
 
 <a href="https://div-lab.github.io/dendromap/" target="_blank">
-	<img src="dendromap-demo.gif" />
+	<img src="https://user-images.githubusercontent.com/65095341/168213776-9181ab6e-b9b8-4557-9ead-b1abf7a50041.gif" />
 </a>
 
 Check out the [live demo of DendroMap](https://div-lab.github.io/dendromap/) and explore for yourself on a few different datasets.
@@ -16,7 +16,8 @@ Describe how to use your own data
 
 Paper link here.
 
-## Run Locally
+## Run Locally!
+
 
 This project uses [Svelte](https://svelte.dev/). You can run the code on your local machine by using one of the following: development or build.
 
