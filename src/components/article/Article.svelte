@@ -37,6 +37,7 @@
 		orange: new Color("#F59C16"),
 		blue: new Color("#06B5DC"),
 		green: new Color("#8ADB8D"),
+		grey: "#686868",
 		bolded: 600,
 		light: 300,
 	};
@@ -71,27 +72,29 @@
 		<SectionPreview
 			backgroundColor={theme.blue.opacity(0.1)}
 			color={theme.blue}
-			href="#exploration-article"
+			href="#explore"
 		>
 			<div style="font-size: 20px;">
-				<span style="color: grey;">How to</span>
+				<span style="color: {theme.grey};">How to</span>
 				<span style="color: {theme.blue}; font-weight: {theme.bolded};"
 					>Explore</span
 				>
-				<span style="color: grey;"> <code>DendroMap</code> </span>
+				<span style="color: {theme.grey};">
+					<code>DendroMap</code>
+				</span>
 			</div>
 		</SectionPreview>
 		<SectionPreview
 			backgroundColor={theme.orange.opacity(0.1)}
 			color={theme.orange}
-			href="#analysis-article"
+			href="#interact-customize"
 		>
 			<div style="font-size: 20px;">
 				<span
 					style="color: {theme.orange}; font-weight: {theme.bolded};"
 					>Interaction</span
 				>
-				<span style="color: grey;">and</span>
+				<span style="color: {theme.grey};">and</span>
 				<span
 					style="color: {theme.orange}; font-weight: {theme.bolded};"
 					>Customization</span
@@ -101,36 +104,27 @@
 		<SectionPreview
 			backgroundColor={theme.green.opacity(0.1)}
 			color={theme.green}
-			href="#more-info-article"
+			href="#paper"
 		>
 			<div style="font-size: 20px;">
 				<span style="color: {theme.green}; font-weight: {theme.bolded};"
 					>More Info</span
 				>
-				<span style="color: grey;"> in our Research Paper</span>
+				<span style="color: {theme.grey};"> in our Research Paper</span>
 			</div>
 		</SectionPreview>
 	</div>
-	<Body>
-		<Name /> was created by
-		{#each people as person, i}
-			<Link href={person.url} openNewTab>{person.name}</Link
-			>{#if i < people.length - 2},{" "}{:else if i < people.length - 1},
-				and{" "}{/if}
-		{/each}
-		at Oregon State University.
-	</Body>
 
 	<Subsection
-		id="exploration-article"
+		id="explore"
 		dividerProps={{ color: theme.blue, thickness: 1.0 }}
 		style="font-weight: {theme.light};"
 	>
-		<span style="color: grey;">How to</span>
+		<span style="color: {theme.grey};">How to</span>
 		<span style="color: {theme.blue}; font-weight: {theme.bolded};"
 			>Explore</span
 		>
-		<span style="color: grey;"> <code>DendroMap</code> </span>
+		<span style="color: {theme.grey};"> <code>DendroMap</code> </span>
 	</Subsection>
 
 	<Body>
@@ -163,14 +157,14 @@
 	</Body>
 
 	<Subsection
-		id="analysis-article"
+		id="interact-customize"
 		dividerProps={{ color: theme.orange, thickness: 1.0 }}
 		style="font-weight: {theme.light};"
 	>
 		<span style="color: {theme.orange}; font-weight: {theme.bolded};"
 			>Interaction</span
 		>
-		<span style="color: grey;">and</span>
+		<span style="color: {theme.grey};">and</span>
 		<span style="color: {theme.orange}; font-weight: {theme.bolded};"
 			>Customization</span
 		>
@@ -237,14 +231,14 @@
 	</Body>
 
 	<Subsection
-		id="more-info-article"
+		id="paper"
 		dividerProps={{ color: theme.green, thickness: 1.0 }}
 		style="font-weight: {theme.light};"
 	>
 		<span style="color: {theme.green}; font-weight: {theme.bolded};"
 			>More Info</span
 		>
-		<span style="color: grey;"> in our Research Paper</span>
+		<span style="color: {theme.grey};"> in our Research Paper</span>
 	</Subsection>
 	<Body>
 		If you are interested in learning about
@@ -268,6 +262,20 @@
 		>.
 		<PaperLink />
 	</Body>
+
+	<Section>Who created <Name />?</Section>
+	<Body>
+		<Name /> was created by
+		{#each people as person, i}
+			<Link href={person.url} openNewTab>{person.name}</Link
+			>{#if i < people.length - 2},{" "}{:else if i < people.length - 1},
+				and{" "}{/if}
+		{/each}
+		at Oregon State University's <Link openNewTab href="https://minsuk.com"
+			>Data Interaction and Visualization (DIV) Lab</Link
+		>.
+	</Body>
+	<Body>We would like to thank...</Body>
 </Writing>
 <div class="bottom-space" />
 
