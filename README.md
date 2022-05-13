@@ -1,33 +1,42 @@
-# DendroMap User Interface
+# DendroMap
 
-This repository contains the `DendroMap` implementation written in Javascript (Svelte and D3.js). This code was used in the [deployment to the web](https://anonymous-account-for-review.github.io/dendromap/).
+[DendroMap](https://div-lab.github.io/dendromap/) is an interactive tool to explore large-scale image datasets used for machine learning.
 
-*The code and deployment are both anonymized for blind review: no names of the members are displayed anywhere*
+A deep understanding of your data can be vital to train or debug your model effectively. However, due to the lack of structure and little-to-no metadata, it can be difficult to gain any insight into large-scale image datasets.
 
+DendroMap adds structure to the data by hierarchically clustering together similar images. Then, the clusters are displayed in a modified treemap visualization that supports zooming.
 
-### Overview
+<a href="https://div-lab.github.io/dendromap/" target="_blank">
+	<img src="dendromap-demo.gif" />
+</a>
 
-![ezgif-1-e4086f606f](https://user-images.githubusercontent.com/81268289/160336156-4009c586-fb52-461a-849c-8cea6d043319.gif)
+Check out the [live demo of DendroMap](https://div-lab.github.io/dendromap/) and explore for yourself on a few different datasets.
 
-The `DendroMap` user interface is an exploration tool for large-scale image datasets used in machine learning. With the `DendroMap`, you can overview the main groups of images and interactively zoom to reveal subgroups that fall within the hierarchy. By treaversing further down the `DendroMap` the overview gets more detailed allowing for fine-grained exploration of images, even in large-scale datasets. 
+Describe how to use your own data
 
-For further customization and analysis during exploration, the sidebar on the left side includes rendering settings, a class table, and image details. 
+Paper link here.
 
-You can use the settings to customize the overview level by changing the image size, to reveal more or less images, or change the number of image groups currently showing. You can also highlight the misclassified images to quickly explore clusters with large numbers of error. 
+## Run Locally
 
-You can use the class table to analyze counts and error at a class level for the images at the current parent cluster. By hovering over an entry in the table, the images that go into computing the count or rate are highlted in the `DendroMap`. This class table can be used to quickly target groups of images and find them on the `DendroMap`. 
+This project uses [Svelte](https://svelte.dev/). You can run the code on your local machine by using one of the following: development or build.
 
-You can click on an image in the `DendroMap` to reveal details about the image in the sidebar. This section is used to get the file id, actual class, and predicted class of an image. It also contains a list of similar images which can be used to find similar or counterfactual exmaples.
-
-*In this particular deployment, the image representations that were clustered came from a high-dimensional vector from a REsnet-50 model trained on cifar10 images.*
-
-### Rum Locally
+### Development
 
 ```bash
 cd dendromap      # inside the dendromap directory
-npm install       # install packages
-npm run dev       # run the development server
+npm install       # install packages if you haven't
+npm run dev       # live-reloading server on port 8080
 ```
 
-then navigate to [http://localhost:8080/](http://localhost:8080/)
+then navigate to [port 8080](http://localhost:8080/) for a live-reloading on file change development server.
 
+### Build
+
+```bash
+cd dendromap		# inside the dendromap directory
+npm install       	# install packages if you haven't
+npm run build       # build project
+npm run start		# run on port 8080
+```
+
+then navigate to [port 8080](http://localhost:8080/) for the static build server.
