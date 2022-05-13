@@ -1,9 +1,5 @@
 <script>
-	import { hierarchy } from "d3";
-	import {
-		assignImageClusterToEachNode,
-		givenInstanceIdGetLeafNodeMap as IdToLeafNodeMap,
-	} from "./util";
+	import { givenInstanceIdGetLeafNodeMap as IdToLeafNodeMap } from "./util";
 	import { ScaleOut } from "svelte-loading-spinners";
 	import { imagesEndpoint } from "./stores/endPoints";
 	import {
@@ -34,35 +30,32 @@
 	import ArticleSidebar from "./components/article/ArticleSidebar.svelte";
 
 	// check (stores/globalDataStore.js for more info.)
-	function storeDataGlobally({ classes, leafNodes, leafIdMap, rootNode }) {
+	function storeDataGlobally({ classes, leafNodes, leafIdMap }) {
 		globalLeafNodesObject.set({ idMap: leafIdMap, array: leafNodes });
 		globalClasses.set(classes);
 	}
 
 	function processData(tree) {
-		function forEachLeaf(parent, callback) {
-			if (parent.leaf) {
-				callback(parent);
-				return;
+		function getLeafNodes(node) {
+			const leaves = [];
+			function _getLeafNode(parent) {
+				if (parent.leaf || parent.children === undefined) {
+					leaves.push(parent);
+					return;
+				}
+				parent.children.forEach((child) => _getLeafNode(child));
 			}
-			parent.children.forEach((child) => {
-				forEachLeaf(child, callback);
-			});
+			_getLeafNode(tree);
+			return leaves;
 		}
-		// remove this by init value as 1 for leaves in python
-		forEachLeaf(tree, (node) => {
-			node.value = 1;
-			node.correct = node.correct_count === 1;
-		});
-		let hierarchicalData = hierarchy(tree).sum((d) => d.value);
-		let leafNodes = hierarchicalData.leaves().map((leaf) => leaf.data);
-		let leafIdMap = IdToLeafNodeMap(leafNodes);
-		assignImageClusterToEachNode(hierarchicalData); // creates a cluster property on each node in the tree
+		const leafNodes = getLeafNodes(tree);
+		const leafIdMap = IdToLeafNodeMap(leafNodes);
 
-		return { leafIdMap, leafNodes, hierarchicalData };
+		return { leafIdMap, leafNodes };
 	}
 	async function formatAndStoreDendrogram(tree, classes) {
-		const { leafIdMap, leafNodes, hierarchicalData } = processData(tree);
+		rootNode = tree;
+		const { leafIdMap, leafNodes } = processData(tree);
 		// change the visualization based on provided information
 		const firstLeafNode = leafNodes[0];
 		hasSimilar.set("similar" in firstLeafNode);
@@ -74,10 +67,8 @@
 		if (hasClassesValue) {
 			treeClasses = classes;
 		}
-		dendrogramData = hierarchicalData;
 		let output = {
 			classes: treeClasses,
-			rootNode: dendrogramData,
 			leafNodes,
 			leafIdMap,
 		};
@@ -159,6 +150,7 @@
 	// app variables for data
 	let dendrogramData;
 	let treeClasses;
+	let rootNode;
 
 	// on change of the dataset update the dataset
 	$: {
@@ -215,7 +207,7 @@
 		<div id="vis">
 			{#if showTreemap}
 				<DendroMap
-					{dendrogramData}
+					dendrogramData={rootNode}
 					imageFilepath={selectedOption.image_filepath}
 					imageWidth={$treemapImageSize}
 					imageHeight={$treemapImageSize}
