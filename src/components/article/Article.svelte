@@ -8,7 +8,7 @@
 	import Link from "../misc/Link.svelte";
 	import SectionPreview from "./SectionPreview.svelte";
 	import PaperLink from "./PaperLink.svelte";
-	import people from "./people";
+	import * as links from "../../links";
 	import Figure from "./Figure.svelte";
 	import { color } from "d3";
 	import GithubIcon from "../misc/GithubIcon.svelte";
@@ -261,10 +261,10 @@
 				grid for exploration
 			</li>
 		</ul>
-		and more, please check out our <Link href="https://arxiv.org" openNewTab
+		and more, please check out our <Link href={links.paper} openNewTab
 			>Research Paper <PaperIcon height={15} fill="black" /></Link
 		> and our
-		<Link href="https://github.com/div-lab/dendromap" openNewTab>
+		<Link href={links.github} openNewTab>
 			Github Repository <GithubIcon height={15} fill="black" />
 		</Link> for <Name />.
 		<PaperLink />
@@ -273,9 +273,9 @@
 	<Section id="who-created">Who Created <Name />?</Section>
 	<Body>
 		<Name /> was created by
-		{#each people as person, i}
+		{#each links.people as person, i}
 			<Link href={person.url} openNewTab>{person.name}</Link
-			>{#if i < people.length - 2},{" "}{:else if i < people.length - 1},
+			>{#if i < links.people.length - 2},{" "}{:else if i < links.people.length - 1},
 				and{" "}{/if}
 		{/each}
 		at Oregon State University's <Link openNewTab href="https://minsuk.com"

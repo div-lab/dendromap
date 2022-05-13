@@ -1,5 +1,5 @@
 <script>
-	import people from "./people";
+	import { people } from "../../links";
 	import Link from "../misc/Link.svelte";
 </script>
 

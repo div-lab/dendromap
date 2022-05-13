@@ -1,4 +1,4 @@
-const people = [
+export const people = [
 	{ name: "Donald Bertucci", url: "https://donnybertucci.com" },
 	{
 		name: "Md Montaser Hamid",
@@ -14,4 +14,5 @@ const people = [
 	{ name: "Minsuk Kahng", url: "https://minsuk.com" },
 ];
 
-export default people;
+export const paper = "https://arxiv.org"; // replace this when we get a link
+export const github = "https://github.com/div-lab/dendromap";

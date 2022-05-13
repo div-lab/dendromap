@@ -25,6 +25,7 @@
 		showMisclassifications,
 		selectedParent,
 	} from "./stores/sidebarStore";
+	import * as links from "./links";
 
 	import Sidebar from "./components/Sidebar.svelte";
 	import DendroMap from "./components/treemap/DendroMap.svelte";
@@ -122,7 +123,6 @@
 		console.log("console log is silenced 😴");
 		console.log = () => {};
 	}
-	silenceConsoleLogs();
 
 	// props
 	export let options; // settings you can change in main.js that shows up in the dropdown in the sidebar
@@ -174,12 +174,12 @@
 	<div id="title"><code>DendroMap</code></div>
 	<div id="links" style="gap: 15px; margin-top:6px;">
 		<div title="Take me to the code." style="">
-			<a href="https://github.com/div-lab/dendromap" target="_blank">
+			<a href={links.github} target="_blank">
 				<GithubIcon height={25} fill="white" />
 			</a>
 		</div>
 		<div title="Take me to the research paper." style="">
-			<a href="https://arxiv.org/" target="_blank">
+			<a href={links.paper} target="_blank">
 				<PaperIcon height={25} fill="white" />
 			</a>
 		</div>
