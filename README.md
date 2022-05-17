@@ -16,7 +16,10 @@ Check out the [live demo of DendroMap](https://div-lab.github.io/dendromap/) and
 -   how we created the DendroMap visualization
 -   DendroMap's effectiveness: user study on DendroMap compared to t-SNE grid for exploration
 
-be sure to also check out our [Research Paper](https://arxiv.org).
+be sure to also check out our research paper:
+
+> [Visual Exploration of Large-Scale Image Datasets for Machine Learning with Treemaps](https://arxiv.org/pdf/2205.06935.pdf).<br />Donald Bertucci, Md Montaser Hamid, Yashwanthi Anand, Anita Ruangrotsakun, Delyar Tabatabai, Melissa Perez, and Minsuk Kahng.<br />_arXiv preprint arXiv:2205.06935_, 2022.
+
 
 ## Use Your Own Data
 
