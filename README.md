@@ -20,7 +20,6 @@ be sure to also check out our research paper:
 
 > [Visual Exploration of Large-Scale Image Datasets for Machine Learning with Treemaps](https://arxiv.org/pdf/2205.06935.pdf).<br />Donald Bertucci, Md Montaser Hamid, Yashwanthi Anand, Anita Ruangrotsakun, Delyar Tabatabai, Melissa Perez, and Minsuk Kahng.<br />_arXiv preprint arXiv:2205.06935_, 2022.
 
-
 ## Use Your Own Data
 
 In the [public deployment](https://div-lab.github.io/dendromap/), we hosted our data in the [DendroMap Data](https://github.com/div-lab/dendromap-data) repository. You can use your own data by following the instructions and example in the [DendroMap Data](https://github.com/div-lab/dendromap-data) `README.md` and you can use our python functions found in the `clustering` folder in this repo. There, you will find specific examples and instructions for how to generate the clustering files.
@@ -71,12 +70,13 @@ A more comprehensive list of props is below, but please look in the `src/compone
 	numClustersShowing: number // > 1
 
 	// the very long list of optional props that you can use to customize the DendroMap
+	// ? is not in the actual name, just indicates optional
 	highlightedOpacity?: number // between [0.0, 1.0]
 	hiddenOpacity?: number // between [0.0, 1.0]
 	transitionSpeed?: number // milliseconds for the animation of zooming
 	clusterColorInterpolateCallback?: (normalized: number) => string // by default uses d3.interpolateGreys
-	labelColorCallback: (d: d3.HierarchyNode) => string
-	labelSizeCallback: (d: d3.HierarchyNode) => string
+	labelColorCallback?: (d: d3.HierarchyNode) => string
+	labelSizeCallback?: (d: d3.HierarchyNode) => string
 	misclassificationColor?: string
 	outlineStrokeWidth?: string
 	outerPadding?: number // the outer perimeter space of a rects
@@ -99,12 +99,12 @@ A more comprehensive list of props is below, but please look in the `src/compone
 
 	// will fire based on user interaction
 	// detail contains <T> {data: T, element: HTMLElement, event}
-	on:imageClick: ({detail}) => void
-	on:imageMouseEnter: ({detail}) => void
-	on:imageMouseLeave: ({detail}) => void
-	on:clusterClick: ({detail}) => void
-	on:clusterMouseEnter: ({detail}) => void
-	on:clusterMouseLeave: ({detail}) => void
+	on:imageClick?: ({detail}) => void
+	on:imageMouseEnter?: ({detail}) => void
+	on:imageMouseLeave?: ({detail}) => void
+	on:clusterClick?: ({detail}) => void
+	on:clusterMouseEnter?: ({detail}) => void
+	on:clusterMouseLeave?: ({detail}) => void
 />
 ```
 
