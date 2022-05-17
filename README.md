@@ -133,6 +133,6 @@ then navigate to [port 8080](http://localhost:8080/) for the static build server
 ## Links
 
 -   [DendroMap Live Site](https://div-lab.github.io/dendromap/)
--   [DendroMap Paper](https://arxiv.org/) change this once we have a link
+-   [DendroMap Paper](https://arxiv.org/abs/2205.06935)
 -   [DendroMap Code](https://github.com/div-lab/dendromap) (**you are here**)
 -   [DendroMap Data](https://github.com/div-lab/dendromap-data)

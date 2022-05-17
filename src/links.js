@@ -14,5 +14,5 @@ export const people = [
 	{ name: "Minsuk Kahng", url: "https://minsuk.com" },
 ];
 
-export const paper = "https://arxiv.org/pdf/2205.06935.pdf"; // replace this when we get a link
+export const paper = "https://arxiv.org/pdf/2205.06935.pdf";
 export const github = "https://github.com/div-lab/dendromap";
