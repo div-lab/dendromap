@@ -1,15 +1,11 @@
 <script>
-	import { people } from "../../links";
+	import { people, paper } from "../../links";
 	import Link from "../misc/Link.svelte";
 </script>
 
 <div id="paper-container">
 	<div>
-		<a
-			href="https://arxiv.org"
-			target="_blank"
-			style="text-decoration: none;"
-		>
+		<a href={paper} target="_blank" style="text-decoration: none;">
 			<img
 				src="figures/Paper.png"
 				alt="paper-thumbnail"
