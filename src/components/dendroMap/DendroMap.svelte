@@ -38,11 +38,6 @@
 		dispatch(name, formatted);
 	}
 
-	// global values used and renamed for this file
-	// $: imageWidth = $treemapImageSize;
-	// $: imageHeight = $treemapImageSize;
-	// $: numClusters = $treemapNumClusters;
-
 	/**
 	 *  These are for the jsdoc for better autocomplete for when doing type comments
 	 * @typedef {{localLeaf: boolean, x0: number, y0: number, x1: number, y1: number}} AdditionalProperties
@@ -417,7 +412,6 @@
 	 * @param {HierarchyNode} root
 	 */
 	function position(group, root) {
-		group.attr("transform", "translate(0, 10)"); // quick fix that probably covers up an underlying problem
 		const subGroups = group.selectChildren("g");
 		subGroups
 			.attr("transform", (d) => {
@@ -571,7 +565,10 @@
 					this,
 					event
 				);
-				if (child !== root && !child.data.leaf) {
+				if (
+					child.data !== formattedDendrogramData.data &&
+					!child.data.leaf
+				) {
 					d3.select(this).attr("stroke", "darkgrey");
 				}
 			})
@@ -582,7 +579,7 @@
 					this,
 					event
 				);
-				if (child !== root) {
+				if (child.data !== formattedDendrogramData.data) {
 					d3.select(this)
 						.attr("stroke", child.strokeColor)
 						.attr("fill", child.rectColor);
@@ -703,7 +700,7 @@
 	}
 </script>
 
-<svg bind:this={svelteSvg} viewbox="0 0 {width} {height + 30}" />
+<svg bind:this={svelteSvg} viewbox="-2 -2 {width + 4} {height + 4}" />
 
 <style>
 	svg {
