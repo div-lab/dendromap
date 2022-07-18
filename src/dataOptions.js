@@ -7,7 +7,6 @@ const options = [
 		classes_cluster_filepath: undefined,
 		image_filepath:
 			"https://div-lab.github.io/dendromap-data/experimental/mnist/images",
-		experimental: true,
 	},
 	{
 		dataset: "CIFAR-10",

@@ -136,14 +136,12 @@
 	export let options; // settings you can change in main.js that shows up in the dropdown in the sidebar
 
 	getURLParameters({
-		experiment: (value) => {
+		mnist: (value) => {
 			if (value !== undefined) {
 			} else {
-				options.forEach((option, index) => {
-					if (option.experimental) {
-						options.splice(index, 1);
-					}
-				});
+				options = options.filter(
+					(option) => option.dataset.toLowerCase() !== "mnist"
+				);
 			}
 		},
 	});
