@@ -7,7 +7,7 @@
 	<div>
 		<a href={paper} target="_blank" style="text-decoration: none;">
 			<img
-				src="figures/Paper.png"
+				src="figures/thumbnail-paper.png"
 				alt="paper-thumbnail"
 				id="paper-thumbnail"
 				width={125}
@@ -15,10 +15,16 @@
 		</a>
 	</div>
 	<div id="paper-text">
-		<div id="paper-title">
-			Visual Exploration of Large-Scale Image Datasets for Machine
-			Learning with Treemaps
-		</div>
+		<a
+			href={paper}
+			target="_blank"
+			style="text-decoration: none; color: inherit;"
+		>
+			<div id="paper-title">
+				DendroMap: Visual Exploration of Large-Scale Image Datasets for
+				Machine Learning with Treemaps
+			</div>
+		</a>
 		<div id="paper-authors">
 			{#each people as person, i}
 				<Link href={person.url} openNewTab style="border: none;"
@@ -26,6 +32,7 @@
 				>{#if i < people.length - 1},{" "}{/if}
 			{/each}
 		</div>
+		<div id="venue">arXiv preprint arXiv:2205.06935</div>
 	</div>
 </div>
 
@@ -45,15 +52,19 @@
 	}
 	#paper-title {
 		font-weight: 600;
-		font-size: 17px;
+		font-size: 16px;
 		line-height: 1.2;
 	}
 	#paper-authors {
 		margin-top: 2px;
-		font-size: 14px;
+		font-size: 15px;
 		line-height: 1.2;
 	}
 	#paper-text {
-		margin-top: 35px;
+		margin-top: 30px;
+	}
+	#venue {
+		font-style: italic;
+		font-size: 13px;
 	}
 </style>
