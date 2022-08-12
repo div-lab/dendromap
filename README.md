@@ -20,20 +20,6 @@ be sure to also check out our research paper:
 
 > [DendroMap: Visual Exploration of Large-Scale Image Datasets for Machine Learning with Treemaps](https://arxiv.org/pdf/2205.06935.pdf).<br />Donald Bertucci, Md Montaser Hamid, Yashwanthi Anand, Anita Ruangrotsakun, Delyar Tabatabai, Melissa Perez, and Minsuk Kahng.<br />_arXiv preprint arXiv:2205.06935_, 2022.
 
-```bibtex
-@article{bertucci2022dendromap,
-  title={DendroMap: Visual Exploration of Large-Scale Image Datasets for Machine Learning with Treemaps},
-  author={Bertucci, Donald and Hamid, Md Montaser and Anand, Yashwanthi and Ruangrotsakun, Anita 
-  	  and Tabatabai, Delyar and Perez, Melissa and Kahng, Minsuk},
-  journal={IEEE Transactions on Visualization and Computer Graphics (TVCG)},
-  year={2022},
-  publisher={IEEE},
-  url={https://div-lab.github.io/dendromap/}
-}
-```
-
-to appear in [VIS 2022](http://ieeevis.org/year/2022/welcome).
-
 ## Use Your Own Data
 
 In the [public deployment](https://div-lab.github.io/dendromap/), we hosted our data in the [DendroMap Data](https://github.com/div-lab/dendromap-data) repository. You can use your own data by following the instructions and example in the [DendroMap Data](https://github.com/div-lab/dendromap-data) `README.md` and you can use our python functions found in the `clustering` folder in this repo. There, you will find specific examples and instructions for how to generate the clustering files.
@@ -153,3 +139,19 @@ then navigate to [port 8080](http://localhost:8080/) for the static build server
 -   [DendroMap Paper](https://arxiv.org/abs/2205.06935)
 -   [DendroMap Code](https://github.com/div-lab/dendromap) (**you are here**)
 -   [DendroMap Data](https://github.com/div-lab/dendromap-data)
+
+## Cite
+
+```bibtex
+@article{bertucci2022dendromap,
+  title={DendroMap: Visual Exploration of Large-Scale Image Datasets for Machine Learning with Treemaps},
+  author={Bertucci, Donald and Hamid, Md Montaser and Anand, Yashwanthi and Ruangrotsakun, Anita 
+  	  and Tabatabai, Delyar and Perez, Melissa and Kahng, Minsuk},
+  journal={IEEE Transactions on Visualization and Computer Graphics (TVCG)},
+  year={2022},
+  publisher={IEEE},
+  url={https://div-lab.github.io/dendromap/}
+}
+```
+
+to appear in [VIS 2022](http://ieeevis.org/year/2022/welcome).
