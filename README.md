@@ -147,7 +147,7 @@ then navigate to [port 8080](http://localhost:8080/) for the static build server
   title={DendroMap: Visual Exploration of Large-Scale Image Datasets for Machine Learning with Treemaps},
   author={Bertucci, Donald and Hamid, Md Montaser and Anand, Yashwanthi and Ruangrotsakun, Anita 
   	  and Tabatabai, Delyar and Perez, Melissa and Kahng, Minsuk},
-  journal={IEEE Transactions on Visualization and Computer Graphics (TVCG)},
+  journal={IEEE Transactions on Visualization and Computer Graphics (IEEE VIS 2022 Conference)},
   year={2022},
   publisher={IEEE},
   url={https://div-lab.github.io/dendromap/}
